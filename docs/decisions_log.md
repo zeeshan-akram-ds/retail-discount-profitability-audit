@@ -32,3 +32,50 @@ Each analysis step must:
 - End with a directly interpretable business finding
 
 Any analysis not contributing to the core problem (discount profitability) is excluded.
+
+## 4. Transaction Table Selection (Source of Truth)
+
+Two tables (`ORDERROWS` and `SALES`) represent the same underlying business event at the same grain (OrderKey, LineNumber).
+
+- `ORDERROWS` is a base transactional table containing product-level line items.
+- `SALES` is a pre-joined, denormalized version that includes customer, store, currency, and exchange rate information.
+
+Despite `SALES` being more convenient, it is not used as the primary source for analysis.
+
+### Decision
+`ORDERROWS` is selected as the base table for all downstream transformations.
+
+### Rationale
+
+- **Control Over Logic**  
+  Using `ORDERROWS` ensures that all joins, transformations, and derived metrics (e.g., revenue, discount, margin) are explicitly defined rather than implicitly inherited from a prebuilt table.
+
+- **Transparency & Auditability**  
+  Since the project’s goal is to audit discount profitability, all calculations must be traceable and defensible. Relying on a pre-aggregated or pre-joined table introduces hidden assumptions.
+
+- **Avoiding Duplication Risk**  
+  Both tables represent the same transactions. Combining or inconsistently using them would lead to duplicate records and inflated metrics (e.g., revenue, profit, quantity).
+
+- **Consistency Across Analysis Layers**  
+  A single, well-defined base table prevents discrepancies across SQL, Python, and reporting layers.
+
+### Implication
+
+All required attributes (customer, store, currency, etc.) will be explicitly joined to `ORDERROWS` during the data preparation stage. This establishes a controlled, analysis-ready dataset as the single source of truth.
+
+## 5. Currency Normalization
+
+All monetary values are converted into USD for consistent analysis.
+
+### Rationale
+- Multiple currencies make revenue and margin non-comparable
+- USD is the majority currency in the dataset
+
+### Implementation
+- Join `ORDERROWS` -> `ORDERS` to get CurrencyCode and OrderDate
+- Join with `CURRENCYEXCHANGE` on (Date, FromCurrency -> USD)
+- Apply date-specific exchange rates for conversion
+
+### Notes
+- Exchange data is complete and one-to-one per (Date, FromCurrency, ToCurrency)
+- Includes identity pairs (e.g., USD -> USD), so no special handling required
