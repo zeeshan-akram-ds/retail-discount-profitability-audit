@@ -79,3 +79,50 @@ All monetary values are converted into USD for consistent analysis.
 ### Notes
 - Exchange data is complete and one-to-one per (Date, FromCurrency, ToCurrency)
 - Includes identity pairs (e.g., USD -> USD), so no special handling required
+
+## 6. Schema Enforcement
+
+Data types and constraints are enforced during load to ensure data integrity.
+
+### Decisions
+- Dates stored as DATE (not text)
+- Monetary values stored as NUMERIC(12,2)
+- Exchange rates stored as NUMERIC(12,6)
+- Primary keys enforced to prevent duplicate transactions
+
+### Rationale
+Early enforcement prevents downstream errors in joins, aggregations, and financial calculations.
+
+## 7. Referential Integrity
+
+Foreign key constraints are enforced to maintain consistency across related tables.
+
+### Rationale
+- Ensures all transactions reference valid dimensions (customer, product, store)
+- Prevents orphan records and unreliable joins
+
+### Note
+Foreign keys are used for data integrity, not performance optimization.
+
+## 8. Data Loading Strategy
+
+Raw CSV files are loaded directly into PostgreSQL without preprocessing in external tools.
+
+### Rationale
+- Keeps data pipeline transparent and reproducible
+- Ensures all transformations are handled within the database layer
+- Avoids hidden data manipulation steps outside version-controlled SQL
+
+## 9. Transaction Table Constraints (ORDERROWS)
+
+Critical transactional fields are defined as NOT NULL to ensure reliability of revenue, discount, and margin calculations.
+
+Composite primary key (OrderKey, LineNumber) is used to preserve transaction-level granularity.
+
+## 10. Product Referential Integrity
+
+A foreign key constraint is enforced between orderrows.ProductKey and product.ProductKey.
+
+### Rationale
+Ensures all transactions reference valid products and prevents orphan records, supporting reliable downstream analysis.
+
