@@ -80,31 +80,7 @@ All monetary values are converted into USD for consistent analysis.
 - Exchange data is complete and one-to-one per (Date, FromCurrency, ToCurrency)
 - Includes identity pairs (e.g., USD -> USD), so no special handling required
 
-## 6. Schema Enforcement
-
-Data types and constraints are enforced during load to ensure data integrity.
-
-### Decisions
-- Dates stored as DATE (not text)
-- Monetary values stored as NUMERIC(12,2)
-- Exchange rates stored as NUMERIC(12,6)
-- Primary keys enforced to prevent duplicate transactions
-
-### Rationale
-Early enforcement prevents downstream errors in joins, aggregations, and financial calculations.
-
-## 7. Referential Integrity
-
-Foreign key constraints are enforced to maintain consistency across related tables.
-
-### Rationale
-- Ensures all transactions reference valid dimensions (customer, product, store)
-- Prevents orphan records and unreliable joins
-
-### Note
-Foreign keys are used for data integrity, not performance optimization.
-
-## 8. Data Loading Strategy
+## 6. Data Loading Strategy
 
 Raw CSV files are loaded directly into PostgreSQL without preprocessing in external tools.
 
@@ -113,16 +89,17 @@ Raw CSV files are loaded directly into PostgreSQL without preprocessing in exter
 - Ensures all transformations are handled within the database layer
 - Avoids hidden data manipulation steps outside version-controlled SQL
 
-## 9. Transaction Table Constraints (ORDERROWS)
+## 7. Constraint Strategy Adjustment
 
-Critical transactional fields are defined as NOT NULL to ensure reliability of revenue, discount, and margin calculations.
-
-Composite primary key (OrderKey, LineNumber) is used to preserve transaction-level granularity.
-
-## 10. Product Referential Integrity
-
-A foreign key constraint is enforced between orderrows.ProductKey and product.ProductKey.
+Primary and foreign key constraints were not enforced during initial data loading.
 
 ### Rationale
-Ensures all transactions reference valid products and prevents orphan records, supporting reliable downstream analysis.
+- Bulk loading with constraints introduced repeated failures and slowed progress
+- For analytical workflows, constraints are not strictly required for query execution
+- Data validation is instead performed through explicit SQL checks
+
+### Implication
+Data integrity is ensured via post-load validation queries (duplicate checks, orphan detection, and logical consistency checks) rather than database-enforced constraints.
+
+
 
