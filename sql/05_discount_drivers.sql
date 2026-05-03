@@ -73,3 +73,67 @@ ORDER BY margin_drop DESC;
 -- Discount depth (%) = (UnitPrice - NetPrice) / UnitPrice
 -- Comparison is restricted to categories that have observations in both low and high discount tiers
 -- Analysis is performed at order line level
+
+-- Business Question:
+-- Which product categories contribute the most to overall margin compression,
+-- considering both the depth of discount impact and the volume of high-discount transactions?
+
+WITH discounted_transactions AS (
+    SELECT
+        p.categoryname,
+        ROUND((orw.unitprice - orw.netprice) / NULLIF(orw.unitprice, 0) * 100, 2) AS discount_depth_pct,
+        ROUND((orw.netprice - orw.unitcost) / NULLIF(orw.netprice, 0) * 100, 2) AS margin_pct
+    FROM orderrows orw
+    JOIN product p
+        ON p.productkey = orw.productkey
+    WHERE orw.unitprice != orw.netprice
+)
+SELECT
+    categoryname,
+
+    COUNT(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN 1 END)
+        AS high_discount_order_lines,
+
+    ROUND(AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END), 2)
+        AS avg_low_margin,
+
+    ROUND(AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END), 2)
+        AS avg_high_margin,
+
+    ROUND(
+        AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END)
+        - AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END),
+    2) AS margin_drop,
+
+    ROUND(
+        (
+            AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END)
+            - AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END)
+        )
+        * COUNT(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN 1 END),
+    2) AS estimated_margin_impact_score
+
+FROM discounted_transactions
+GROUP BY categoryname
+HAVING
+    AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END) IS NOT NULL
+    AND
+    AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END) IS NOT NULL
+ORDER BY estimated_margin_impact_score DESC;
+
+-- Insight:
+-- Categories such as Computers and Cell Phones drive the highest margin impact,
+-- not because they have the largest margin drop, but due to their significantly higher
+-- volume of high-discount transactions.
+-- While margin compression is relatively consistent across categories (~4.5–5.2%),
+-- the overall impact is amplified in high-volume categories, making them the primary
+-- contributors to margin erosion at the business level.
+-- This shows that profit leakage is driven more by scale than by extreme discounting behavior
+-- in any single category.
+
+-- Assumptions:
+-- Margin (%) = (NetPrice - UnitCost) / NetPrice
+-- Discount depth (%) = (UnitPrice - NetPrice) / UnitPrice
+-- High discount tier is defined as 10%–20%
+-- Estimated impact score combines margin drop (%) with high-discount volume to rank relative impact
+-- Metric is comparative and not a direct monetary loss calculation
