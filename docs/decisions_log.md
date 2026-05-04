@@ -63,22 +63,17 @@ Despite `SALES` being more convenient, it is not used as the primary source for 
 
 All required attributes (customer, store, currency, etc.) will be explicitly joined to `ORDERROWS` during the data preparation stage. This establishes a controlled, analysis-ready dataset as the single source of truth.
 
-## 5. Currency Normalization
+## 5. Currency Normalization Strategy
 
-All monetary values are converted into USD for consistent analysis.
+Currency normalization into USD was initially planned to ensure comparability across transactions.
 
-### Rationale
-- Multiple currencies make revenue and margin non-comparable
-- USD is the majority currency in the dataset
+However, this step was intentionally deferred during the SQL analysis phase for the following reasons:
 
-### Implementation
-- Join `ORDERROWS` -> `ORDERS` to get CurrencyCode and OrderDate
-- Join with `CURRENCYEXCHANGE` on (Date, FromCurrency -> USD)
-- Apply date-specific exchange rates for conversion
+- The primary objective of this audit is to analyze pricing behavior (discounting and margin patterns), not absolute financial reporting.
+- All margin calculations are ratio-based, which reduces sensitivity to currency scale differences.
+- Introducing currency joins at this stage would add complexity and risk of join errors without materially affecting directional insights.
 
-### Notes
-- Exchange data is complete and one-to-one per (Date, FromCurrency, ToCurrency)
-- Includes identity pairs (e.g., USD -> USD), so no special handling required
+This decision keeps the analysis focused and controlled, while leaving normalization available for future extensions (e.g., financial reporting or cross-country comparisons).
 
 ## 6. Data Loading Strategy
 
@@ -100,6 +95,27 @@ Primary and foreign key constraints were not enforced during initial data loadin
 
 ### Implication
 Data integrity is ensured via post-load validation queries (duplicate checks, orphan detection, and logical consistency checks) rather than database-enforced constraints.
+
+## 8. Analysis Grain
+
+All analysis is performed at the order line level (OrderKey, LineNumber).
+
+### Rationale
+- Revenue, cost, and profit are computed using quantity-adjusted line values
+- Prevents distortion that can occur when aggregating at order level
+- Aligns with how discounts are applied (per product line, not per order)
+
+## 9. Discount Definition
+
+A transaction is classified as discounted when:
+
+UnitPrice != NetPrice
+
+### Rationale
+- Validated across the dataset
+- Captures all price reductions without relying on an explicit discount column
+- Ensures consistent classification across all analysis steps
+
 
 
 
