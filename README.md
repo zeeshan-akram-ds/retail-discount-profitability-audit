@@ -19,12 +19,12 @@ Understanding this matters because volume-driven discounting can mask profitabil
 
 ## Project Scope
 
-**Current phase: SQL Analysis — Complete**
+**Current phase: Python Analysis — In Progress**
 
 | Phase | Status |
 |---|---|
 | SQL analysis (exploration, discount impact, customer & store behavior, trends) | Complete |
-| Python analysis (statistical validation, segmentation modeling) | Pending |
+| Python analysis (statistical validation, segmentation modeling) | In Progress |
 | Dashboard (Power BI) | Pending |
 | Final reporting | Partially complete |
 
@@ -75,8 +75,27 @@ The SQL analysis follows a structured sequence. Each file addresses a distinct b
 - High-discount customers (75%+ of transactions discounted) produce measurably lower average margins than low-discount customers
 - Discount rates and margin levels are uniform across all store locations, indicating centrally governed pricing rather than store-level discretion
 - No worsening trend is observed year over year; the pattern is structural and stable
+- Correlation between discount depth and margin is -0.37, confirming a moderate but systematic negative relationship; the pattern holds consistently across tiers and is not attributable to any single category
+- Margin compression is uniform in rate across all product categories (~4.9 to 5.3 percentage points), confirming a standardised discount structure rather than category-level pricing optimisation
+- Estimated margin loss is volume-driven: Computers and Cell Phones account for the greatest aggregate impact not because their discounts are deeper, but because their transaction volume amplifies a system-wide pricing pattern
 
 ---
+
+## Visualizations
+
+The following charts were produced during the Python validation phase. Full-resolution versions are available in `exports/`.
+
+**Discount Depth Distribution**
+![Discount Distribution](exports/discount_distribution.png)
+Discount depth is tightly concentrated between 5% and 14%, confirming that the business operates within a controlled discounting band with no extreme price reductions.
+
+**Margin Distribution — Discounted vs. Full-Price**
+![Margin Distribution](exports/margin_distribution.png)
+Discounted transactions cluster at a visibly lower margin level, reinforcing the ~4–5 percentage point compression identified in SQL.
+
+**Discount Depth vs. Margin (Transaction-Level Scatter)**
+![Discount vs Margin](exports/discount_vs_margin.png)
+The negative relationship between discount depth and margin is monotonic — no tier shows margin recovery — confirming that deeper discounts consistently erode profitability without exception.
 
 ## Repository Structure
 
@@ -96,7 +115,7 @@ retail-discount-profitability-audit/
 │
 ├── powerbi/          # Dashboard files (pending)
 │
-├── python/           # Statistical analysis and modeling scripts (pending)
+├── python/           # Discount validation and category-level margin analysis (in progress)
 │
 ├── sql/
 │   ├── 00_schema.sql                    # Table definitions
@@ -140,6 +159,6 @@ No external dependencies are required for the SQL phase.
 
 ## Next Steps
 
-- **Python analysis** — statistical validation of segment differences, correlation analysis between discount depth and margin, and customer lifetime value segmentation
+- **Python — Customer Behavior & Discount Dependency** *(next)* — deeper behavioural segmentation of customer discount dependency beyond SQL-level profiling, including lifetime value implications and segment-level margin comparison
 - **Power BI dashboard** — interactive exploration of discount behavior by category, store, customer segment, and time period
 - **Possible extensions** — currency-normalized margin comparison across geographies, return rate impact on net profitability, and product-level discount concentration analysis
