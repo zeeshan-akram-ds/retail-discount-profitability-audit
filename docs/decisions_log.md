@@ -116,6 +116,13 @@ UnitPrice != NetPrice
 - Captures all price reductions without relying on an explicit discount column
 - Ensures consistent classification across all analysis steps
 
+## 10. Discount Definition Validation
+
+Throughout the project, a transaction is classified as discounted when `netprice != unitprice`.
+
+Prior to analysis, it was confirmed that no transactions exist where `netprice > unitprice` — meaning the alternative definition `netprice < unitprice` produces an identical result set. Both conditions are therefore equivalent in this dataset.
+
+The stricter form (`netprice < unitprice`) was validated and could be used interchangeably, but `!=` is retained for semantic clarity: a discounted transaction is one where the actual selling price differs from the listed price.
 
 
 
