@@ -25,7 +25,7 @@ Understanding this matters because volume-driven discounting can mask profitabil
 |---|---|
 | SQL analysis (exploration, discount impact, customer & store behavior, trends) | Complete |
 | Python analysis (data validation, category analysis, customer segmentation) | Notebooks 1–2 Complete · Notebook 3 Pending |
-| Dashboard (Power BI) | Pending |
+| Dashboard (Power BI) | Executive Page 1 Complete |
 | Final reporting | Partially complete |
 
 ---
@@ -113,6 +113,42 @@ Margin declines monotonically across the three segments — Low: 53.5%, Medium: 
 ![Customer Segment Engagement](exports/customer_segment_engagement.png)
 Medium-discount customers generate the highest average order lines (6.23), nearly double the High-discount group (3.20). This inverted-U pattern confirms that beyond a threshold, additional discount dependency reduces engagement rather than increasing it.
 
+## Executive Dashboard (Power BI)
+
+The project now includes an executive-facing Power BI dashboard designed as a pricing audit rather than a generic BI report.
+
+### Dashboard Philosophy
+
+The dashboard is intentionally structured around one business question:
+
+> Is discounting being used tactically, or has it become the operational pricing floor?
+
+The design prioritises:
+- executive readability within seconds
+- decision-oriented visuals instead of exploratory clutter
+- narrative clarity over interaction-heavy reporting
+
+### Current Dashboard Coverage
+
+**Page 1 — Executive Verdict: Pricing Audit**
+
+Key elements:
+- Executive KPI strip (revenue, margin, discount penetration, profit gap)
+- Margin compression by discount tier
+- Structured insight panels summarising audit conclusions
+- Final executive verdict banner
+
+### Key Executive Findings Displayed
+
+- 61% of all transactions are discounted
+- Discounted transactions generate materially lower margin and profit per line
+- Margin compression increases consistently with discount depth
+- The pattern is stable across time and structurally embedded in operations
+
+### Dashboard Preview
+
+![Executive Dashboard](powerbi/exports/dashboard_page_1.png)
+
 ## Repository Structure
 
 ```
@@ -129,9 +165,10 @@ retail-discount-profitability-audit/
 │
 ├── exports/          # Contains exports like screenshots(empty for now)
 │
-├── powerbi/          # Dashboard files (pending)
-│
-├── python/           # Discount validation, category-level margin analysis, customer segmentation (Notebooks 1–2 complete)
+├── powerbi/          # Executive pricing audit dashboard (.pbix + assets)
+│   ├── exports/      # Exported charts, dashboard screenshots, and analytical outputs
+│       ├── dashboard_page_1.png       
+├── python/           # Validation, category analysis, customer segmentation, export preparation
 │
 ├── sql/
 │   ├── 00_schema.sql                    # Table definitions
@@ -175,6 +212,19 @@ No external dependencies are required for the SQL phase.
 
 ## Next Steps
 
-- **Python — Customer Behavior & Discount Dependency** *(next)* — deeper behavioural segmentation of customer discount dependency beyond SQL-level profiling, including lifetime value implications and segment-level margin comparison
-- **Power BI dashboard** — interactive exploration of discount behavior by category, store, customer segment, and time period
-- **Possible extensions** — currency-normalized margin comparison across geographies, return rate impact on net profitability, and product-level discount concentration analysis
+- **Power BI — Remaining Pages**
+  - Category-level margin leakage audit
+  - Customer dependency and engagement analysis
+  - Store-level pricing uniformity validation
+
+- **Advanced Python Analysis**
+  - Statistical validation of segment differences
+  - Revenue-weighted customer analysis
+  - Correlation and sensitivity testing
+  - Scenario modelling for discount reduction strategies
+
+- **Possible Extensions**
+  - Currency-normalized profitability analysis
+  - Product-level discount concentration modelling
+  - Return-rate adjusted profitability
+  - Forecasting impact of discount policy changes
