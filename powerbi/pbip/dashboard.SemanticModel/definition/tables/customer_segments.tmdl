@@ -1,0 +1,61 @@
+table customer_segments
+	lineageTag: 2c368114-a8ae-4c9f-8887-20932c212678
+
+	column customerkey
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a12f2b5-e1ab-4ba6-83e3-74d5343ea60a
+		summarizeBy: none
+		sourceColumn: customerkey
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_order_lines
+		dataType: int64
+		formatString: 0
+		lineageTag: 50b2d8fb-efa0-4225-ade9-9c460d18ff72
+		summarizeBy: none
+		sourceColumn: total_order_lines
+
+		annotation SummarizationSetBy = Automatic
+
+	column discount_pct
+		dataType: double
+		lineageTag: f49e0a60-9acb-403b-b333-f229b7f6fdd0
+		summarizeBy: none
+		sourceColumn: discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_margin
+		dataType: double
+		lineageTag: 90689eec-d1c1-4aa1-9c8d-e5f863fb5c70
+		summarizeBy: none
+		sourceColumn: avg_margin
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column discount_segment
+		dataType: string
+		lineageTag: e6c945f3-3211-42af-89ef-8a0d07cedde9
+		summarizeBy: none
+		sourceColumn: discount_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	partition customer_segments = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("D:\data-analysis-projects\retail-discount-profitability-audit\data\processed\customer_segments.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null])
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

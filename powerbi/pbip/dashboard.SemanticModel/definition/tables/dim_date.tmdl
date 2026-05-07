@@ -1,0 +1,54 @@
+table dim_date
+	lineageTag: 7c44bd3e-f453-456c-a4c0-0654d5eb242a
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: Short Date
+		lineageTag: f6557640-fb43-445d-8590-700293193017
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		formatString: 0
+		lineageTag: c2b1d13f-6f45-4334-b64e-2a14c9a7c15e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		lineageTag: 4ce4f4ac-30fc-4d89-8763-89f1cb1f1a0b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNum
+		formatString: 0
+		lineageTag: 20b8b838-e61d-4495-b364-d5f9a07a4805
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [MonthNum]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		lineageTag: f2cc91e5-e46d-4f30-9680-6baa9da07f00
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = calculated
+		mode: import
+		source = ADDCOLUMNS(CALENDAR(MIN(fact_order_lines[OrderDate]), MAX(fact_order_lines[OrderDate])), "Year", YEAR([Date]), "Month", FORMAT([Date], "MMM"), "MonthNum", MONTH([Date]), "Quarter", "Q" & FORMAT([Date], "Q"))
+
+	annotation PBI_Id = 1e286b69992a443c8322c1844d5eb5af
+

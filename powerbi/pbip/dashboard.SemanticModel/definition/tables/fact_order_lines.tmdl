@@ -1,0 +1,234 @@
+table fact_order_lines
+	lineageTag: 63057ca1-6de7-4cc9-b05c-40d2c3ff4d6b
+
+	column orderkey
+		dataType: int64
+		formatString: 0
+		lineageTag: d6425424-f9a2-4887-8c88-2ae8c0326728
+		summarizeBy: sum
+		sourceColumn: orderkey
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: 26fd258a-b780-4e05-9b8d-df1592c55cdd
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column unitprice
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 9df0737d-b35f-434b-bb30-2ebb84b61ebb
+		summarizeBy: sum
+		sourceColumn: unitprice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column netprice
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: d96c9511-5951-4251-b146-daf3d88e4c1c
+		summarizeBy: sum
+		sourceColumn: netprice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column unitcost
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: a983f518-3961-430d-a35e-60ffa804f41c
+		summarizeBy: sum
+		sourceColumn: unitcost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column customerkey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d97fd081-bae2-4574-9290-2dea311319c6
+		summarizeBy: none
+		sourceColumn: customerkey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column storekey
+		dataType: int64
+		formatString: 0
+		lineageTag: 9230a02c-c2b7-43f2-a17c-dd53b19614fc
+		summarizeBy: sum
+		sourceColumn: storekey
+
+		annotation SummarizationSetBy = Automatic
+
+	column orderdate
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 2c83a4b3-1ee6-40b0-a590-538900ce6695
+		summarizeBy: none
+		sourceColumn: orderdate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column deliverydate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 518029b9-bc2e-465a-9045-08507558998d
+		summarizeBy: none
+		sourceColumn: deliverydate
+
+		variation Variation
+			isDefault
+			relationship: e49e51c7-e8d2-4f51-adc3-de789cc8004f
+			defaultHierarchy: LocalDateTable_8c2424bd-f876-4017-b885-3f8c73d6e4d5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column categoryname
+		dataType: string
+		lineageTag: 21d4c1b1-dcf9-4491-a6da-bfce9a6e41eb
+		summarizeBy: none
+		sourceColumn: categoryname
+
+		annotation SummarizationSetBy = Automatic
+
+	column subcategoryname
+		dataType: string
+		lineageTag: 0c60e764-8dcf-48dc-8375-391524abbb40
+		summarizeBy: none
+		sourceColumn: subcategoryname
+
+		annotation SummarizationSetBy = Automatic
+
+	column age
+		dataType: int64
+		formatString: 0
+		lineageTag: e8a57d2d-f641-475f-b6a4-6c8e2ef67018
+		summarizeBy: sum
+		sourceColumn: age
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: 51d787ae-0d22-473f-96f6-589e1f40c219
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column occupation
+		dataType: string
+		lineageTag: b39f1ef5-3101-4606-87e5-0e27281a0fa6
+		summarizeBy: none
+		sourceColumn: occupation
+
+		annotation SummarizationSetBy = Automatic
+
+	column continent
+		dataType: string
+		lineageTag: 7ef9b5be-0e27-46e8-b4cb-9b596bf414fc
+		summarizeBy: none
+		sourceColumn: continent
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 523aa949-d9fa-44c4-92b5-3f8d7c157f9a
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column revenue
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 9c65b3da-4600-483d-95e9-e6961f950280
+		summarizeBy: sum
+		sourceColumn: revenue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column profit
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 106a09c1-5b12-45a9-a807-2365e2727733
+		summarizeBy: sum
+		sourceColumn: profit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column margin_pct
+		dataType: double
+		lineageTag: 26bcdc5d-425b-40bd-879b-c9278035ebb0
+		summarizeBy: sum
+		sourceColumn: margin_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_discounted
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c431d095-003f-4fb8-afaa-027968112086
+		summarizeBy: none
+		sourceColumn: is_discounted
+
+		annotation SummarizationSetBy = Automatic
+
+	column discount_pct
+		dataType: double
+		lineageTag: ecbe1e28-d605-4f67-b2ca-bd0cabcca16d
+		summarizeBy: sum
+		sourceColumn: discount_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column discount_tier
+		dataType: string
+		lineageTag: 0c0cb272-e041-45ca-93a2-0983c75d94b4
+		summarizeBy: none
+		sourceColumn: discount_tier
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_order_lines = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents("D:\data-analysis-projects\retail-discount-profitability-audit\data\processed\df_base.parquet"), [Compression=null, LegacyColumnNameEncoding=false, MaxDepth=null]),
+				    #"changed data types" = Table.TransformColumnTypes(Source,{{"quantity", Int64.Type}, {"orderdate", type date}, {"deliverydate", type date}, {"age", Int64.Type}, {"revenue", Currency.Type}, {"profit", Currency.Type}, {"unitprice", Currency.Type}, {"netprice", Currency.Type}, {"unitcost", Currency.Type}})
+				in
+				    #"changed data types"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

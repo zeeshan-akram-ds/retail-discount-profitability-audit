@@ -56,3 +56,10 @@ data/processed/*
 .vscode/
 .idea/
 
+# Power BI binaries
+*.pbix
+
+# Cache / temp
+*.pbit
+*.tmp
+.DS_Store

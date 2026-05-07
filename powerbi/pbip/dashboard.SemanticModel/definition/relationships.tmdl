@@ -1,0 +1,13 @@
+relationship e49e51c7-e8d2-4f51-adc3-de789cc8004f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_order_lines.deliverydate
+	toColumn: LocalDateTable_8c2424bd-f876-4017-b885-3f8c73d6e4d5.Date
+
+relationship fa648f8d-3a88-73d5-6aff-0df3f4ac30e1
+	fromColumn: fact_order_lines.customerkey
+	toColumn: customer_segments.customerkey
+
+relationship 7329314b-f702-d963-d0bd-b76dd5d63a75
+	fromColumn: fact_order_lines.orderdate
+	toColumn: dim_date.Date
+

@@ -1,0 +1,25 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["fact_order_lines","customer_segments","_Measures"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.139.2054.0 (24.12)+334ca1c95b576cc53924655643b0d36f21caac55
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table fact_order_lines
+ref table DateTableTemplate_ae9b3664-52b9-4d60-85aa-16cb8b63b521
+ref table LocalDateTable_8c2424bd-f876-4017-b885-3f8c73d6e4d5
+ref table customer_segments
+ref table dim_date
+ref table _Measures
+
+ref cultureInfo en-US
+
