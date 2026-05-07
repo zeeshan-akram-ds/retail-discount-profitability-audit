@@ -4,10 +4,10 @@
   "position": {
     "x": 272,
     "y": 90,
-    "z": 3,
+    "z": 3000,
     "height": 90,
     "width": 232,
-    "tabOrder": 3
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "card",
@@ -125,7 +125,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'AVG TRANSACTION MARGIN'"
+                  "Value": "'AVG LINE MARGIN'"
                 }
               }
             }
