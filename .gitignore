@@ -23,8 +23,6 @@ venv/
 env/
 ENV/
 
-__pycache__/
-.ipynb_checkpoints/
 
 # ------------------------------
 # Jupyter
@@ -45,12 +43,6 @@ data/processed/*
 # Power BI
 # ------------------------------
 *.pbix
-
-# ------------------------------
-# Exports
-# ------------------------------
-exports/*
-!exports/.gitkeep
 
 # ------------------------------
 # Logs / temp
