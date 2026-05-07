@@ -2,7 +2,7 @@ table _Measures
 	lineageTag: 97a2d283-b1c5-4c64-96e2-d157e1441414
 
 	measure 'Total Revenue' = SUM(fact_order_lines[Revenue])
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
 		lineageTag: a37419a6-02d6-4360-8807-094f9a6f0e25
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
@@ -13,10 +13,17 @@ table _Measures
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
-	measure 'Blended Margin' = DIVIDE([Total Profit], [Total Revenue], 0)
+	measure 'Avg Margin %' =
+			
+			AVERAGEX(
+			    fact_order_lines,
+			    DIVIDE(
+			        fact_order_lines[Profit],
+			        fact_order_lines[Revenue]
+			    )
+			)
+		formatString: 0%;-0%;0%
 		lineageTag: 1b19dd10-d406-43ba-8867-c123789b1d75
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Total Order Lines' = COUNTROWS(fact_order_lines)
 		formatString: 0
@@ -27,37 +34,52 @@ table _Measures
 		lineageTag: 2ede7e6d-e71c-4ce8-bc73-aaab2b6b347d
 
 	measure 'Discount Penetration' = DIVIDE([Discounted Lines], [Total Order Lines], 0)
+		formatString: 0%;-0%;0%
 		lineageTag: c0373bb3-a9f1-40eb-bda9-7464281236b3
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Discounted Margin' = CALCULATE([Blended Margin], fact_order_lines[UnitPrice] > fact_order_lines[NetPrice])
+	measure 'Discounted Margin' = CALCULATE([Avg Margin %], fact_order_lines[UnitPrice] > fact_order_lines[NetPrice])
+		formatString: 0.0%;-0.0%;0.0%
 		lineageTag: e24fdb6d-5800-4c8a-9751-0b5abb48690c
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Full Price Margin' = CALCULATE([Blended Margin], fact_order_lines[UnitPrice] = fact_order_lines[NetPrice])
+	measure 'Full Price Margin' = CALCULATE([Avg Margin %], fact_order_lines[UnitPrice] = fact_order_lines[NetPrice])
 		lineageTag: 16250684-e1c5-4f2e-b366-9ef2d26f9fef
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Profit Per Discounted Line' = CALCULATE(DIVIDE([Total Profit], [Total Order Lines]), fact_order_lines[UnitPrice] > fact_order_lines[NetPrice])
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \$#,0.0000;(\$#,0.0000);\$#,0.0000
 		lineageTag: 1395cb66-b60f-4d53-802a-abb6f7dcbf11
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure 'Profit Per Full Price Line' = CALCULATE(DIVIDE([Total Profit], [Total Order Lines]), fact_order_lines[UnitPrice] = fact_order_lines[NetPrice])
-		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		formatString: \$#,0.0000;(\$#,0.0000);\$#,0.0000
 		lineageTag: 9997a14a-f67c-4ecf-a672-befeb6dfae88
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
-	measure 'Profit Gap' = [Profit Per Discounted Line] - [Profit Per Full Price Line]
+	measure 'Profit Gap' =
+			
+			INT([Profit Per Full Price Line])
+			-
+			INT([Profit Per Discounted Line])
 		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
 		lineageTag: e464fa23-6018-43ee-9bad-e15d16348b40
 
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+	measure Subtitle_Rev = FORMAT([Total Order Lines], "#,##0") & " order lines"
+		lineageTag: d9961776-4f8a-4ff6-ba2f-0a926b9efbe9
+
+	measure Subtitle_MarginBase = "Arithmetic mean per line"
+		lineageTag: 472980c2-3a8b-4fec-b4a2-a2c256a1788e
+
+	measure Subtitle_Penetration = "Transactions below list price"
+		lineageTag: d8efda2e-15f5-43cc-9fa3-c0a0a9348c7a
+
+	measure Subtitle_Impact = "vs " & FORMAT([Full Price Margin], "0.0%") & " full-price"
+		lineageTag: 73acef9b-5310-4418-a2dc-87c4b2baf472
+
+	measure Subtitle_Gap = "Per discounted line"
+		lineageTag: 06410d61-c1ba-43a7-b1a3-d046e1388182
 
 	partition _Measures = m
 		mode: import
