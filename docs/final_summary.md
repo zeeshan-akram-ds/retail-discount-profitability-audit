@@ -92,3 +92,37 @@ The following variables are within operational control and represent the primary
 - **Currency normalization not applied.** The currency exchange table was not used in this audit. Margin comparisons across geographies may carry currency distortion that is not visible in the current analysis, though the use of relative metrics limits the severity of this gap.
 - **Discount depth thresholds are analytically defined.** Tier boundaries at 5%, 10%, and 20% were set for pattern detection and are not derived from the business's own pricing policy documentation. They should be revisited if actual internal pricing bands differ.
 - **Store segmentation has limited discriminatory value here.** Because store-level variation is minimal, the High/Medium/Low store classification does not meaningfully differentiate stores in this dataset. It is retained for methodological consistency but is not a basis for store-level action.
+
+## 9. Python Analysis — Extended Findings
+
+The SQL audit established the structural profile of discounting across transactions, categories, customers, and time. Two Python notebooks extended the analysis to customer-level behaviour and validated that the transaction-level patterns hold when aggregated to individual customer economics.
+
+### 9.1 Transaction-Level Validation
+
+All SQL-phase financial metrics were reproduced in Python and confirmed consistent: total revenue of ~$218.8M, total profit of ~$122.3M, and a discount rate of 61.13%. The correlation between discount depth and margin is −0.37, confirming a moderate but systematic negative relationship that holds across all discount tiers and is not attributable to any single category.
+
+### 9.2 Category-Level Margin Compression
+
+Margin compression is uniform across all product categories, ranging from approximately 4.9 to 5.3 percentage points when comparing low-discount and high-discount transaction tiers. This uniformity confirms a standardised discount structure rather than category-specific pricing optimisation.
+
+The aggregate margin impact is therefore determined by transaction volume rather than by the severity of discounting in any individual category. Computers and Cell Phones account for the greatest total margin erosion — approximately 18,000 and 17,000 high-discount order lines respectively — not because their discounts are deeper, but because their volume amplifies a system-wide pricing pattern.
+
+### 9.3 Customer Segmentation — Discount Dependency
+
+Customers were segmented into three groups by discount dependency: Low (<50% of purchases discounted), Medium (50–75%), and High (≥75%). Across 52,189 unique customers, the margin finding is clear and monotonic:
+
+- **Low segment** (21,336 customers): average discount rate 31%, average margin 53.5%, average order lines 3.77
+- **Medium segment** (14,758 customers): average discount rate 66%, average margin 51.7%, average order lines 6.23
+- **High segment** (16,095 customers): average discount rate 96%, average margin 50.4%, average order lines 3.20
+
+Margin compression is not an artifact of transaction-level aggregation — it persists when measured at the customer level.
+
+### 9.4 The Engagement Finding
+
+The Medium-discount segment generates the highest purchase frequency of all three groups at 6.23 average order lines per customer — nearly double the High-discount group. This inverted-U pattern indicates that discounting supports engagement up to a threshold, beyond which additional discount dependency reduces activity rather than increasing it.
+
+High-discount customers are therefore commercially inefficient in two dimensions simultaneously: they generate the lowest margins and the lowest purchase frequency. The margin erosion they produce is not compensated by volume.
+
+### 9.5 Structural vs Targeted Discounting
+
+The distribution of customer discount rates is right-skewed, with a mean of 61% and a median of 64%. Approximately 24% of customers operate at ≥90% discount usage, while only 11% transact near full price. This polarised distribution rules out selective targeting as the explanation for high discount prevalence and confirms that discounting is a structural feature of customer purchasing behaviour — not a promotional lever applied to specific segments.

@@ -19,12 +19,12 @@ Understanding this matters because volume-driven discounting can mask profitabil
 
 ## Project Scope
 
-**Current phase: Python Analysis — In Progress**
+**Current phase: Python Analysis — Notebooks 1 and 2 Complete**
 
 | Phase | Status |
 |---|---|
 | SQL analysis (exploration, discount impact, customer & store behavior, trends) | Complete |
-| Python analysis (statistical validation, segmentation modeling) | In Progress |
+| Python analysis (data validation, category analysis, customer segmentation) | Notebooks 1–2 Complete · Notebook 3 Pending |
 | Dashboard (Power BI) | Pending |
 | Final reporting | Partially complete |
 
@@ -78,6 +78,10 @@ The SQL analysis follows a structured sequence. Each file addresses a distinct b
 - Correlation between discount depth and margin is -0.37, confirming a moderate but systematic negative relationship; the pattern holds consistently across tiers and is not attributable to any single category
 - Margin compression is uniform in rate across all product categories (~4.9 to 5.3 percentage points), confirming a standardised discount structure rather than category-level pricing optimisation
 - Estimated margin loss is volume-driven: Computers and Cell Phones account for the greatest aggregate impact not because their discounts are deeper, but because their transaction volume amplifies a system-wide pricing pattern
+- Margin compression persists at the customer level: Low-dependency customers generate ~53.5% average margin, Medium-dependency ~51.7%, and High-dependency ~50.4% — a monotonic decline consistent with the transaction-level pattern
+- Customer engagement follows an inverted-U pattern: Medium-discount customers produce the highest purchase frequency (6.23 average order lines), nearly double the High-discount group (3.20), confirming that deeper discounting does not generate proportional volume gain
+- 24.2% of customers transact at ≥90% discount dependency, while only 11% operate near full price — ruling out selective targeting as the primary explanation and confirming that discounting is structurally embedded in customer purchasing behaviour
+- High-discount customers are the least commercially efficient segment: they generate the lowest margins without compensating through higher activity, making them the primary source of customer-level margin erosion
 
 ---
 
@@ -97,6 +101,18 @@ Discounted transactions cluster at a visibly lower margin level, reinforcing the
 ![Discount vs Margin](exports/discount_vs_margin.png)
 The negative relationship between discount depth and margin is monotonic — no tier shows margin recovery — confirming that deeper discounts consistently erode profitability without exception.
 
+**Customer Discount Dependency Distribution**
+![Customer Discount Distribution](exports/customer_discount_distribution.png)
+The distribution is right-skewed with the dominant concentration at 100%, confirming that the largest single customer group transacts almost exclusively on discounted prices. A secondary cluster near 50% reflects mixed purchasing behaviour.
+
+**Average Margin by Customer Discount Segment**
+![Customer Segment Margin](exports/customer_segment_margin.png)
+Margin declines monotonically across the three segments — Low: 53.5%, Medium: 51.7%, High: 50.4% — confirming at the customer level that discount dependency is directly associated with lower realised profitability.
+
+**Customer Engagement by Discount Segment**
+![Customer Segment Engagement](exports/customer_segment_engagement.png)
+Medium-discount customers generate the highest average order lines (6.23), nearly double the High-discount group (3.20). This inverted-U pattern confirms that beyond a threshold, additional discount dependency reduces engagement rather than increasing it.
+
 ## Repository Structure
 
 ```
@@ -115,7 +131,7 @@ retail-discount-profitability-audit/
 │
 ├── powerbi/          # Dashboard files (pending)
 │
-├── python/           # Discount validation and category-level margin analysis (in progress)
+├── python/           # Discount validation, category-level margin analysis, customer segmentation (Notebooks 1–2 complete)
 │
 ├── sql/
 │   ├── 00_schema.sql                    # Table definitions
