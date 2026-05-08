@@ -81,6 +81,48 @@ table _Measures
 	measure Subtitle_Gap = "Per discounted line"
 		lineageTag: 06410d61-c1ba-43a7-b1a3-d046e1388182
 
+	measure 'Estimated Margin Leakage' =
+			
+			ABS(SUMX(
+			    FILTER(fact_order_lines, fact_order_lines[is_discounted] = TRUE),
+			    ([Full Price Margin] - fact_order_lines[margin_pct]) * fact_order_lines[revenue]
+			))
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: e9120c5d-8c51-402f-a68f-92fbd941abc2
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Margin Drop' =
+			
+			[Full Price Margin] - [Avg Margin %]
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: b8d4290d-4fd1-45af-b02a-784dc0bcce7e
+
+	measure 'Avg Line Discount' =
+			
+			AVERAGE(fact_order_lines[discount_pct]) / 100
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 21e8e87d-ea12-40a1-b653-8e4da7eba439
+
+	measure 'High Discount Lines' =
+			
+			CALCULATE(
+			    COUNTROWS(fact_order_lines),
+			    fact_order_lines[discount_tier] = "High Discount (10-20%)"
+			)
+		formatString: #,0
+		lineageTag: 3e953e10-5432-45a4-ae45-c4bcca85eebe
+
+	measure 'High Discount Share' =
+			
+			DIVIDE(
+			    [High Discount Lines],
+			    [Total Order Lines],
+			    0
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 9cb1e6a2-22b6-4af3-bdf3-e342a4c8d694
+
 	partition _Measures = m
 		mode: import
 		source =
