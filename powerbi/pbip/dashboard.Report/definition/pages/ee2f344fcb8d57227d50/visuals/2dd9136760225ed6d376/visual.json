@@ -1,0 +1,100 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "2dd9136760225ed6d376",
+  "position": {
+    "x": 767.54913702007752,
+    "y": 93.77949982388165,
+    "z": 7001,
+    "height": 251.04050722085242,
+    "width": 464.56921451215214,
+    "tabOrder": 7001
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Computers and Cell Phones account for ",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#8b95a5"
+                    }
+                  },
+                  {
+                    "value": "~46%",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#ffffff"
+                    }
+                  },
+                  {
+                    "value": " of all high-discount volume. Their margin compression rate is normal, but their sheer transaction scale is driving the dollar leakage.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#8b95a5"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Margin drop is tightly grouped at ",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#8b95a5"
+                    }
+                  },
+                  {
+                    "value": "~3 percentage points",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "11pt",
+                      "color": "#ffffff"
+                    }
+                  },
+                  {
+                    "value": " across almost all categories. This confirms the business operates on a standardized, systemic discounting policy rather than category-specific promotional pricing.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#8b95a5"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -26,7 +26,7 @@ table _Measures
 		lineageTag: 1b19dd10-d406-43ba-8867-c123789b1d75
 
 	measure 'Total Order Lines' = COUNTROWS(fact_order_lines)
-		formatString: 0
+		formatString: #,0
 		lineageTag: 2403b051-81c3-4d62-b7f0-d30215c01abf
 
 	measure 'Discounted Lines' = CALCULATE([Total Order Lines], fact_order_lines[UnitPrice] > fact_order_lines[NetPrice])

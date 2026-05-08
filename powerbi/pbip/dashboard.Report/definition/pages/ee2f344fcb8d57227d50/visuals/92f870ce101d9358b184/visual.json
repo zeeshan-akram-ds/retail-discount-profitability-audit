@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "eedfc2612fc45463aa4f",
+  "name": "92f870ce101d9358b184",
   "position": {
-    "x": 15,
-    "y": 630,
-    "z": 18000,
-    "height": 60,
-    "width": 12,
-    "tabOrder": 18000
+    "x": 700,
+    "y": 110,
+    "z": 7002,
+    "height": 40,
+    "width": 50,
+    "tabOrder": 7002
   },
   "visual": {
     "visualType": "shape",
@@ -34,43 +34,11 @@
                   "Value": "90L"
                 }
               }
-            },
-            "angle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
             }
           }
         }
       ],
       "fill": [
-        {
-          "properties": {
-            "fillColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#F59E0B'"
-                    }
-                  }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        },
         {
           "properties": {
             "show": {
@@ -84,6 +52,17 @@
         }
       ],
       "outline": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        },
         {
           "properties": {
             "lineColor": {

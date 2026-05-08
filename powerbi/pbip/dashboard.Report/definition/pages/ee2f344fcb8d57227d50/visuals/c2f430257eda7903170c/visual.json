@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "eedfc2612fc45463aa4f",
+  "name": "c2f430257eda7903170c",
   "position": {
-    "x": 15,
-    "y": 630,
-    "z": 18000,
-    "height": 60,
-    "width": 12,
-    "tabOrder": 18000
+    "x": 760,
+    "y": 90,
+    "z": 7000,
+    "height": 260,
+    "width": 480,
+    "tabOrder": 7000
   },
   "visual": {
     "visualType": "shape",
@@ -18,7 +18,14 @@
             "tileShape": {
               "expr": {
                 "Literal": {
-                  "Value": "'line'"
+                  "Value": "'rectangle'"
+                }
+              }
+            },
+            "roundEdge": {
+              "expr": {
+                "Literal": {
+                  "Value": "8L"
                 }
               }
             }
@@ -31,14 +38,7 @@
             "shapeAngle": {
               "expr": {
                 "Literal": {
-                  "Value": "90L"
-                }
-              }
-            },
-            "angle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
+                  "Value": "0L"
                 }
               }
             }
@@ -53,16 +53,9 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#F59E0B'"
+                      "Value": "'#1A2235'"
                     }
                   }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
                 }
               }
             }
@@ -70,7 +63,9 @@
           "selector": {
             "id": "default"
           }
-        },
+        }
+      ],
+      "outline": [
         {
           "properties": {
             "show": {
@@ -80,26 +75,6 @@
                 }
               }
             }
-          }
-        }
-      ],
-      "outline": [
-        {
-          "properties": {
-            "lineColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#F59E0B'"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
           }
         }
       ]
