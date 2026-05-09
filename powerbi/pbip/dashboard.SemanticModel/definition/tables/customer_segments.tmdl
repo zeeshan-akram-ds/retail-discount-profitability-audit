@@ -29,6 +29,8 @@ table customer_segments
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"customer_segments","TableItemName":"discount_pct (bins)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
 	column avg_margin
 		dataType: double
 		lineageTag: 90689eec-d1c1-4aa1-9c8d-e5f863fb5c70
@@ -46,6 +48,48 @@ table customer_segments
 		sourceColumn: discount_segment
 
 		annotation SummarizationSetBy = Automatic
+
+	column 'discount_pct (bins)' =
+			IF(
+				ISBLANK('customer_segments'[discount_pct]),
+				BLANK(),
+				IF(
+					'customer_segments'[discount_pct] >= 0,
+					ROUNDDOWN('customer_segments'[discount_pct] / 5, 0) * 5,
+					ROUNDUP('customer_segments'[discount_pct] / 5, 0) * 5
+				)
+			)
+		lineageTag: 3b1127b4-f855-48a0-aa47-4d9e7114252a
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "customer_segments"
+				          }
+				        },
+				        "Property": "discount_pct"
+				      }
+				    }
+				  ],
+				  "binningMetadata": {
+				    "binSize": {
+				      "value": 5.0,
+				      "unit": 0
+				    }
+				  }
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"c","Entity":"customer_segments"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"discount_pct"}}],"BinItem":{"Expression":{"Floor":{"Expression":{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"discount_pct"}},"Size":5.0}}}}
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	partition customer_segments = m
 		mode: import

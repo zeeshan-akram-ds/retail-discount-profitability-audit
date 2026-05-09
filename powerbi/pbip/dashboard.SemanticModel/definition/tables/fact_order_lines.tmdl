@@ -219,6 +219,27 @@ table fact_order_lines
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Discount Tier (Sorted)' = ```
+			
+			SWITCH(
+			    TRUE(),
+			    fact_order_lines[discount_pct] > 0 
+			        && fact_order_lines[discount_pct] < 5, 
+			        "1. Low Discount (<5%)",
+			
+			    fact_order_lines[discount_pct] >= 5 
+			        && fact_order_lines[discount_pct] <= 10, 
+			        "2. Moderate Discount (5-10%)",
+			
+			    fact_order_lines[discount_pct] > 10, 
+			        "3. High Discount (10-20%)"
+			)
+			```
+		lineageTag: aaa6878d-200a-40c8-b30e-e348ecbae95c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition fact_order_lines = m
 		mode: import
 		source =
