@@ -124,5 +124,60 @@ Prior to analysis, it was confirmed that no transactions exist where `netprice >
 
 The stricter form (`netprice < unitprice`) was validated and could be used interchangeably, but `!=` is retained for semantic clarity: a discounted transaction is one where the actual selling price differs from the listed price.
 
+## 11. Dashboard Design Philosophy
 
+The Power BI dashboard is structured as an audit narrative rather than 
+an exploratory BI tool.
 
+### Decision
+Three pages, each answering one specific business question, with no 
+cross-page slicers or drill-through interactions required to read the findings.
+
+### Rationale
+The project's output is a profitability audit, not a self-service reporting 
+layer. Interaction-heavy dashboards shift interpretive responsibility to the 
+viewer. Since the findings are definitive rather than exploratory, the dashboard 
+should deliver conclusions directly rather than require the reader to construct 
+them through filtering.
+
+### Implication
+Every visual earns its place by serving the page's central question. 
+Visuals with no direct tie to the audit finding are excluded regardless 
+of analytical interest.
+
+## 12. DAX String Measures for Labelled Metric Display
+
+### Decision
+Customer segment metrics (average margin, average order lines, average discount 
+usage) are exposed as formatted string measures rather than numeric measures.
+
+### Rationale
+The new Power BI card visual is designed for a single primary numeric measure. 
+The multi-row card visual supports multiple measures but produced inconsistent 
+layout alignment within the available segment card space. Embedding the label 
+directly into the DAX measure resolves both constraints without introducing 
+additional text boxes or layout elements.
+
+### Implication
+These measures are UI layer constructs, not analytical measures. They should 
+not be used in calculations or aggregations elsewhere in the model.
+
+## 13. Recommendations Deferred Until Full Evidence Is Complete
+
+### Decision
+No formal recommendations were written until all three analytical phases — 
+SQL, Python, and Power BI — were complete.
+
+### Rationale
+Recommendations derived from partial evidence risk being accurate in isolation 
+but misleading in aggregate. The customer behavioral layer (Python Notebook 2) 
+materially changed the framing of the category-level findings from Page 2. 
+A recommendation written after the SQL phase alone would have lacked the 
+constraint that 24% of customers operate at near-total discount dependency — 
+which affects both the feasibility and the risk profile of any pricing 
+intervention.
+
+### Implication
+Each recommendation in the final report will reference specific findings 
+from the phase that most directly supports it, and will include explicit 
+conditions under which the recommendation would not hold.
