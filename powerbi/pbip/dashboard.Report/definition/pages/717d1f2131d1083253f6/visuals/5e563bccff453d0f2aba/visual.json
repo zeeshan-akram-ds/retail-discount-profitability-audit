@@ -1,13 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "68535e5fe739afaf31c6",
+  "name": "5e563bccff453d0f2aba",
   "position": {
-    "x": 15,
-    "y": 630,
-    "z": 2000,
-    "height": 60,
-    "width": 12,
-    "tabOrder": 4000
+    "x": 0,
+    "y": 8,
+    "z": 1000,
+    "height": 154,
+    "width": 12
   },
   "visual": {
     "visualType": "shape",
@@ -34,51 +33,6 @@
                   "Value": "90L"
                 }
               }
-            },
-            "angle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "fill": [
-        {
-          "properties": {
-            "fillColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#F59E0B'"
-                    }
-                  }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        },
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
             }
           }
         }
@@ -91,9 +45,16 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#F59E0B'"
+                      "Value": "'#10B981'"
                     }
                   }
+                }
+              }
+            },
+            "weight": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
                 }
               }
             }
@@ -106,5 +67,6 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "88cf645601e57aa703e1",
   "howCreated": "InsertVisualButton"
 }

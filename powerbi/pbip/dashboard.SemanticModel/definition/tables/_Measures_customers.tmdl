@@ -26,6 +26,15 @@ table _Measures_customers
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: cf286145-0211-47d3-9843-0c6bacc090d9
 
+	measure UI_Margin = FORMAT([Avg Customer Margin], "0.0%") & " avg margin"
+		lineageTag: 019f7b7b-1c3f-450d-b6a5-e01f1a767e86
+
+	measure UI_OrderLines = FORMAT([Avg Order Lines], "0.0") & " avg order lines"
+		lineageTag: b4ecd279-6eaf-423f-8bd7-1cd802e6de3f
+
+	measure UI_DiscountUsage = FORMAT([Avg Customer Discount Usage], "0%") & " avg discount usage"
+		lineageTag: 675efcd8-a4b6-48d8-9bc7-00c7255919aa
+
 	partition _Measures_customers = m
 		mode: import
 		source =

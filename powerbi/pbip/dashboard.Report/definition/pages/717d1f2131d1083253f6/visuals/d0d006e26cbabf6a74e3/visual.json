@@ -1,13 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "02a511f3a322e22b9dcc",
+  "name": "d0d006e26cbabf6a74e3",
   "position": {
-    "x": 20,
-    "y": 630,
-    "z": 1000,
-    "height": 60,
-    "width": 1220,
-    "tabOrder": 2000
+    "x": 23,
+    "y": 135,
+    "z": 4000,
+    "height": 28,
+    "width": 330
   },
   "visual": {
     "visualType": "textbox",
@@ -19,10 +18,13 @@
               {
                 "textRuns": [
                   {
-                    "value": ""
+                    "value": "Highest margin profile",
+                    "textStyle": {
+                      "color": "#10b981"
+                    }
                   }
                 ],
-                "horizontalTextAlignment": "center"
+                "horizontalTextAlignment": "right"
               }
             ]
           }
@@ -33,14 +35,10 @@
       "background": [
         {
           "properties": {
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#2A1B0A'"
-                    }
-                  }
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -49,5 +47,6 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  }
+  },
+  "parentGroupName": "88cf645601e57aa703e1"
 }

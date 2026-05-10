@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
-  "name": "68535e5fe739afaf31c6",
+  "name": "d193f4f72bdfdc65f176",
   "position": {
-    "x": 15,
-    "y": 630,
-    "z": 2000,
-    "height": 60,
-    "width": 12,
-    "tabOrder": 4000
+    "x": 0,
+    "y": 8,
+    "z": 1000,
+    "height": 154,
+    "width": 12.029916897506922,
+    "tabOrder": 8000
   },
   "visual": {
     "visualType": "shape",
@@ -34,51 +34,6 @@
                   "Value": "90L"
                 }
               }
-            },
-            "angle": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "fill": [
-        {
-          "properties": {
-            "fillColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#F59E0B'"
-                    }
-                  }
-                }
-              }
-            },
-            "transparency": {
-              "expr": {
-                "Literal": {
-                  "Value": "0D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        },
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
             }
           }
         }
@@ -96,6 +51,13 @@
                   }
                 }
               }
+            },
+            "weight": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
             }
           },
           "selector": {
@@ -106,5 +68,6 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "539a1b83c81775299ed7",
   "howCreated": "InsertVisualButton"
 }
