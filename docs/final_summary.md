@@ -1,7 +1,10 @@
 # Discounting Strategy — Profitability Impact Analysis
-Contoso Retail | Order Line Level | SQL Audit
+Contoso Retail | Order Line Level | Full-Stack Audit (SQL · Python · Power BI)
 
-**Executive Summary:** The business operates a structurally embedded discounting model affecting ~61% of transactions, resulting in consistent margin compression without evidence of deterioration over time.
+**Executive Summary:** The business operates a structurally embedded discounting 
+model affecting ~61% of transactions, resulting in consistent margin compression 
+across all analytical dimensions — transactions, categories, customers, stores, 
+and time — with no evidence of deterioration or targeted application.
 
 
 ## 1. Objective
@@ -126,3 +129,38 @@ High-discount customers are therefore commercially inefficient in two dimensions
 ### 9.5 Structural vs Targeted Discounting
 
 The distribution of customer discount rates is right-skewed, with a mean of 61% and a median of 64%. Approximately 24% of customers operate at ≥90% discount usage, while only 11% transact near full price. This polarised distribution rules out selective targeting as the explanation for high discount prevalence and confirms that discounting is a structural feature of customer purchasing behaviour — not a promotional lever applied to specific segments.
+
+## 10. Executive Dashboard — Audit Visualisation
+
+The analytical findings from the SQL and Python phases were translated into a 
+three-page Power BI dashboard designed as a pricing audit deliverable rather than 
+a generic reporting interface. The dashboard is structured around one question: 
+is discounting a controlled pricing decision, or has it become the operational 
+pricing floor?
+
+### Page 1 — Executive Verdict
+
+Presents the headline audit conclusion through five KPI cards (total revenue, 
+average line margin, discount penetration, discounted margin, and profit gap), 
+a margin-by-discount-tier bar chart with a company average reference line, and 
+three structured insight panels. The page closes with a verdict banner stating 
+the audit conclusion directly.
+
+### Page 2 — Where the Margin Goes
+
+Isolates the category-level drivers of margin leakage through a dollar-impact 
+ranking of categories under high-discount conditions, a bubble scatter confirming 
+that margin compression is uniform in rate but amplified by volume, and a tier 
+economics reference table. The closing statement confirms that margin loss is 
+scale-driven, not caused by extreme discounting in specific categories.
+
+### Page 3 — The Customer Reality
+
+Closes the audit with the behavioral layer. Three segment cards compare Low, 
+Medium, and High discount-dependency customers across margin, engagement, and 
+discount usage. A customer discount dependency distribution histogram confirms 
+the right-skewed, structurally embedded pattern. A store uniformity scatter 
+confirms that all stores cluster around the corporate average, ruling out 
+location-driven pricing variation. The page closes with the finding that 
+discounting has become embedded customer expectation rather than a tactical 
+sales mechanism.
