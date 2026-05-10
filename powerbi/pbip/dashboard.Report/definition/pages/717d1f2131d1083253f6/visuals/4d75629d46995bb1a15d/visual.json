@@ -6,7 +6,8 @@
     "y": 40,
     "z": 5000,
     "height": 85,
-    "width": 180.44875346260383
+    "width": 180.44875346260383,
+    "tabOrder": 3000
   },
   "visual": {
     "visualType": "multiRowCard",
@@ -114,6 +115,19 @@
     },
     "visualContainerObjects": {
       "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
         {
           "properties": {
             "show": {

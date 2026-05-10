@@ -3,10 +3,11 @@
   "name": "11e2958b98d1aae9334e",
   "position": {
     "x": 23,
-    "y": 45,
+    "y": 60,
     "z": 3000,
     "height": 50,
-    "width": 129.99999999999997
+    "width": 129.99999999999997,
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "card",
@@ -105,6 +106,19 @@
     },
     "visualContainerObjects": {
       "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
         {
           "properties": {
             "show": {

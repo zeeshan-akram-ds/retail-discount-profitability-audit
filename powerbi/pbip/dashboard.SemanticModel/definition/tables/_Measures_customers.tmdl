@@ -35,6 +35,18 @@ table _Measures_customers
 	measure UI_DiscountUsage = FORMAT([Avg Customer Discount Usage], "0%") & " avg discount usage"
 		lineageTag: 675efcd8-a4b6-48d8-9bc7-00c7255919aa
 
+	measure 'Histogram Bar Color' =
+			
+			VAR CurrentBin = MAX(customer_segments[discount_pct (bins)])
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    CurrentBin < 50, "#10B981", -- Green (Low Dependency alignment)
+			    CurrentBin < 75, "#F59E0B", -- Amber (Medium Dependency alignment)
+			    "#EF4444"                   -- Red (High Dependency alignment)
+			)
+		lineageTag: 9361c022-2c8f-46b4-a828-612e531afecc
+
 	partition _Measures_customers = m
 		mode: import
 		source =

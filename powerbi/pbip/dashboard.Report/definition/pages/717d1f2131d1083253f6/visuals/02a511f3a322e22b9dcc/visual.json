@@ -3,11 +3,11 @@
   "name": "02a511f3a322e22b9dcc",
   "position": {
     "x": 20,
-    "y": 630,
+    "y": 640,
     "z": 1000,
     "height": 60,
     "width": 1220,
-    "tabOrder": 2000
+    "tabOrder": 1000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,12 @@
               {
                 "textRuns": [
                   {
-                    "value": ""
+                    "value": "The evidence suggests discounting is no longer functioning as a tactical sales mechanism. It has become embedded customer expectation across the business.",
+                    "textStyle": {
+                      "fontFamily": "Segoe (Bold)",
+                      "fontSize": "14pt",
+                      "color": "#ffffff"
+                    }
                   }
                 ],
                 "horizontalTextAlignment": "center"
