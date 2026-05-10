@@ -19,13 +19,13 @@ Understanding this matters because volume-driven discounting can mask profitabil
 
 ## Project Scope
 
-**Current phase: Python Analysis — Notebooks 1 and 2 Complete**
+**Current phase: Complete — SQL, Python, and Power BI dashboard all finished**
 
 | Phase | Status |
 |---|---|
 | SQL analysis (exploration, discount impact, customer & store behavior, trends) | Complete |
-| Python analysis (data validation, category analysis, customer segmentation) | Notebooks 1–2 Complete · Notebook 3 Pending |
-| Dashboard (Power BI) | Executive Page 1 Complete |
+| Python analysis (data validation, category analysis, customer segmentation) | Notebooks 1–2 Complete |
+| Dashboard (Power BI) | Complete — 3 pages |
 | Final reporting | Partially complete |
 
 ---
@@ -128,26 +128,28 @@ The design prioritises:
 - decision-oriented visuals instead of exploratory clutter
 - narrative clarity over interaction-heavy reporting
 
-### Current Dashboard Coverage
+### Dashboard Structure (3 Pages)
 
 **Page 1 — Executive Verdict: Pricing Audit**
+KPI strip covering total revenue, average margin, discount penetration, and profit gap. 
+Margin compression by discount tier with company average reference line. Structured 
+insight panels and a final executive verdict banner answering the audit question directly.
 
-Key elements:
-- Executive KPI strip (revenue, margin, discount penetration, profit gap)
-- Margin compression by discount tier
-- Structured insight panels summarising audit conclusions
-- Final executive verdict banner
+**Page 2 — Where the Margin Goes**
+Category-level margin leakage ranked by dollar impact. Bubble scatter showing margin 
+compression vs discount depth by category. Tier economics table summarising baseline 
+performance by discount band. Confirms margin erosion is volume-driven, not caused by 
+extreme discounting in specific categories.
 
-### Key Executive Findings Displayed
-
-- 61% of all transactions are discounted
-- Discounted transactions generate materially lower margin and profit per line
-- Margin compression increases consistently with discount depth
-- The pattern is stable across time and structurally embedded in operations
+**Page 3 — The Customer Reality**
+Three segment cards (Low, Medium, High dependency) showing customer count, average 
+margin, average order lines, and average discount usage per segment. Customer discount dependency distribution histogram. Store uniformity scatter proving pricing is centrally governed, not store-driven. Closes the audit by confirming discounting has become embedded customer expectation rather than a tactical sales mechanism.
 
 ### Dashboard Preview
 
-![Executive Dashboard](powerbi/exports/dashboard_page_1.png)
+![Executive Verdict](powerbi/exports/dashboard_page_1.png)
+![Where the Margin Goes](powerbi/exports/dashboard_page_2.png)
+![The Customer Reality](powerbi/exports/dashboard_page_3.png)
 
 ## Repository Structure
 
@@ -166,8 +168,11 @@ retail-discount-profitability-audit/
 ├── exports/          # Contains exports like screenshots(empty for now)
 │
 ├── powerbi/          # Executive pricing audit dashboard (.pbix + assets)
-│   ├── exports/      # Exported charts, dashboard screenshots, and analytical outputs
-│       ├── dashboard_page_1.png       
+│   ├── exports/      # Dashboard screenshots and analytical outputs
+│       ├── dashboard_page_1.png
+│       ├── dashboard_page_2.png
+│       └── dashboard_page_3.png
+│       └── kpi_cards_page_3.png
 ├── python/           # Validation, category analysis, customer segmentation, export preparation
 │
 ├── sql/
@@ -212,19 +217,9 @@ No external dependencies are required for the SQL phase.
 
 ## Next Steps
 
-- **Power BI — Remaining Pages**
-  - Category-level margin leakage audit
-  - Customer dependency and engagement analysis
-  - Store-level pricing uniformity validation
-
-- **Advanced Python Analysis**
-  - Statistical validation of segment differences
-  - Revenue-weighted customer analysis
-  - Correlation and sensitivity testing
-  - Scenario modelling for discount reduction strategies
-
-- **Possible Extensions**
-  - Currency-normalized profitability analysis
-  - Product-level discount concentration modelling
-  - Return-rate adjusted profitability
-  - Forecasting impact of discount policy changes
+- **Executive Summary** — One-page PDF distilling the audit findings and recommendations for non-technical stakeholders
+- **Final Recommendations** — Evidence-backed recommendations with explicit failure 
+  conditions and business constraints documented
+- **Loom Walkthrough** — Recorded dashboard narrative for portfolio and outreach use
+- **Medium Case Study** — Written case study framing the audit as a business problem, 
+  not a technical exercise
