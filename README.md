@@ -1,7 +1,7 @@
 # Retail Discounting — Profitability Audit
 **Full analysis:** See `docs/final_summary.md`
 
-Structured SQL audit evaluating whether discounting is a controlled pricing mechanism or a structural source of margin compression.
+End-to-end pricing profitability audit evaluating whether discounting functions as a tactical pricing lever or a structural source of margin compression.
 
 ---
 
@@ -16,6 +16,30 @@ Discounting is one of the most common levers in retail pricing, but its impact o
 Understanding this matters because volume-driven discounting can mask profitability problems that are invisible at the aggregate revenue level.
 
 ---
+
+## Executive Conclusion
+
+The analysis indicates that discounting is no longer functioning as a tactical pricing lever.
+
+Instead, it operates as the company’s structural pricing floor:
+
+- 61% of all transactions occur below listed price
+- margin declines consistently as discount depth increases
+- high-discount customers generate the lowest profitability
+- store behavior is nearly identical across locations
+- the pattern remains stable year over year
+
+The evidence suggests the business is not experiencing isolated promotional leakage. It is operating under a standardized discounting model that compresses margin at scale.
+
+## Technical Stack
+
+| Layer | Tools |
+|---|---|
+| Database | PostgreSQL |
+| Analysis | SQL, Python (Pandas, Matplotlib) |
+| Visualization | Power BI |
+| Storage | Parquet |
+| Version Control | Git + GitHub |
 
 ## Project Scope
 
@@ -52,6 +76,15 @@ Understanding this matters because volume-driven discounting can mask profitabil
 
 ---
 
+## Business Questions Answered
+
+1. Is discounting reducing profitability?
+2. Which categories amplify margin leakage?
+3. Are high-discount customers commercially valuable?
+4. Is discounting tactical or structurally embedded?
+5. Are stores behaving independently or under centralized pricing policy?
+6. Is the pattern stable or deteriorating over time?
+
 ## Analytical Approach
 
 The SQL analysis follows a structured sequence. Each file addresses a distinct business question.
@@ -68,22 +101,29 @@ The SQL analysis follows a structured sequence. Each file addresses a distinct b
 
 ## Key Findings
 
-- ~61% of all order lines are transacted below the listed unit price.
-- Discounted transactions produce ~4 percentage points lower margin and ~97 lower profit per order line than full-price transactions
-- Margin compresses consistently as discount depth increases, from ~54% at low levels to ~49% at the 10–20% tier; no transactions exceed 20% discount depth
-- Computers and Cell Phones account for ~46% of all high-discount volume and drive the largest aggregate margin impact due to transaction scale
-- High-discount customers (75%+ of transactions discounted) produce measurably lower average margins than low-discount customers
-- Discount rates and margin levels are uniform across all store locations, indicating centrally governed pricing rather than store-level discretion
-- No worsening trend is observed year over year; the pattern is structural and stable
-- Correlation between discount depth and margin is -0.37, confirming a moderate but systematic negative relationship; the pattern holds consistently across tiers and is not attributable to any single category
-- Margin compression is uniform in rate across all product categories (~4.9 to 5.3 percentage points), confirming a standardised discount structure rather than category-level pricing optimisation
-- Estimated margin loss is volume-driven: Computers and Cell Phones account for the greatest aggregate impact not because their discounts are deeper, but because their transaction volume amplifies a system-wide pricing pattern
-- Margin compression persists at the customer level: Low-dependency customers generate ~53.5% average margin, Medium-dependency ~51.7%, and High-dependency ~50.4% — a monotonic decline consistent with the transaction-level pattern
-- Customer engagement follows an inverted-U pattern: Medium-discount customers produce the highest purchase frequency (6.23 average order lines), nearly double the High-discount group (3.20), confirming that deeper discounting does not generate proportional volume gain
-- 24.2% of customers transact at ≥90% discount dependency, while only 11% operate near full price — ruling out selective targeting as the primary explanation and confirming that discounting is structurally embedded in customer purchasing behaviour
-- High-discount customers are the least commercially efficient segment: they generate the lowest margins without compensating through higher activity, making them the primary source of customer-level margin erosion
+- ~61% of all order lines are transacted below the listed unit price, indicating discounting operates as a default pricing condition rather than a limited promotional tactic.
+- Discounted transactions generate ~4 percentage points lower margin and ~$97 lower profit per order line versus full-price transactions.
+- Margin compresses consistently as discount depth increases, falling from ~54% at low discount levels to ~49% within the 10–20% tier.
+- Computers and Cell Phones contribute ~46% of all high-discount transaction volume and drive the largest aggregate margin leakage due to scale.
+- Discount rates and margin levels remain highly uniform across stores, confirming centrally governed pricing behavior rather than local store discretion.
+- No material deterioration is observed year-over-year, indicating the pricing pattern is stable and structurally embedded.
+- High-discount customers generate the lowest margins while also exhibiting lower engagement than medium-dependency customers.
+- 24.2% of customers transact at ≥90% discount dependency, while only 11% purchase near full price, confirming discounting has become normalized customer behavior rather than selective targeting.
 
 ---
+
+## Additional Analytical Findings
+
+- Correlation between discount depth and margin is -0.37, confirming a moderate but systematic inverse relationship.
+- Margin compression remains highly consistent across categories (~4.9–5.3 percentage points), indicating standardized discounting rather than category-specific pricing optimization.
+- Estimated margin loss is volume-driven rather than severity-driven: Computers and Cell Phones create the largest aggregate impact because of transaction scale.
+- Customer-level margin declines monotonically across dependency segments:
+  - Low Dependency: ~53.5%
+  - Medium Dependency: ~51.7%
+  - High Dependency: ~50.4%
+- Medium-dependency customers demonstrate the highest engagement profile at 6.23 average order lines per customer.
+- High-discount customers are the least commercially efficient segment: lower margins without proportional activity recovery.
+- The customer engagement pattern follows an inverted-U structure, suggesting discounting supports engagement only up to a threshold before diminishing returns emerge.
 
 ## Visualizations
 
@@ -145,11 +185,33 @@ extreme discounting in specific categories.
 Three segment cards (Low, Medium, High dependency) showing customer count, average 
 margin, average order lines, and average discount usage per segment. Customer discount dependency distribution histogram. Store uniformity scatter proving pricing is centrally governed, not store-driven. Closes the audit by confirming discounting has become embedded customer expectation rather than a tactical sales mechanism.
 
-### Dashboard Preview
+## Dashboard Preview
 
-![Executive Verdict](powerbi/exports/dashboard_page_1.png)
-![Where the Margin Goes](powerbi/exports/dashboard_page_2.png)
-![The Customer Reality](powerbi/exports/dashboard_page_3.png)
+### Executive Verdict Dashboard
+Identifies discounting as a structurally embedded pricing mechanism through KPI-driven executive audit visuals.
+
+![Executive Verdict Dashboard](powerbi/exports/dashboard_page_1.png)
+
+---
+
+### Margin Leakage Diagnostics
+Demonstrates how category-scale transaction volume amplifies profitability compression across standardized discount structures.
+
+![Margin Leakage Diagnostics](powerbi/exports/dashboard_page_2.png)
+
+---
+
+### Customer Dependency Analysis
+Validates that discounting has become normalized customer purchasing behavior rather than selective promotional activity.
+
+![Customer Dependency Analysis](powerbi/exports/dashboard_page_3.png)
+
+---
+
+### Analytical Workflow & Validation Architecture
+Illustrates the end-to-end audit framework connecting SQL validation, Python behavioral modeling, and Power BI executive reporting.
+
+![Analytical Workflow Architecture](exports/analytical_workflow.png)
 
 ## Repository Structure
 
@@ -165,7 +227,7 @@ retail-discount-profitability-audit/
 │   ├── final_summary.md        # Full business-ready audit report
 │   └── final_summary.pdf       # PDF export of the audit report
 │
-├── exports/          # Contains exports like screenshots(empty for now)
+├── exports/          # Analytical chart exports
 │
 ├── powerbi/          # Executive pricing audit dashboard (.pbix + assets)
 │   ├── exports/      # Dashboard screenshots and analytical outputs
@@ -191,6 +253,15 @@ retail-discount-profitability-audit/
 ```
 
 ---
+
+## What This Project Demonstrates
+
+- Business-oriented SQL analysis
+- Translation of findings into executive reporting
+- Customer segmentation and behavioral analysis
+- validation using Python
+- Decision-focused dashboard design
+- Structured analytical documentation
 
 ## How to Reproduce
 
