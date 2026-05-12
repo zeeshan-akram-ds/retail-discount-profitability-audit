@@ -213,6 +213,49 @@ Illustrates the end-to-end audit framework connecting SQL validation, Python beh
 
 ![Analytical Workflow Architecture](exports/analytical_workflow.png)
 
+## Final Executive Report
+
+A formal business-style audit report summarizing the full analytical investigation,
+key findings, operational implications, and strategic recommendations.
+
+Contents include:
+- Executive summary
+- Transaction-level profitability analysis
+- Category leakage assessment
+- Customer discount dependency analysis
+- Structural pricing governance findings
+- Strategic recommendations
+- Assumptions and limitations appendix
+
+Formats:
+- PDF executive report
+- Professionally formatted for stakeholder review
+
+Location:
+`docs/retail_discount_audit_report.pdf`
+
+## Executive Presentation Deck
+
+A concise 7-slide executive presentation designed for stakeholder review
+and business discussion.
+
+The deck summarizes:
+- Core audit findings
+- Margin compression drivers
+- Customer behavior patterns
+- Structural pricing evidence
+- Strategic recommendations
+ 
+Formats:
+- PowerPoint presentation (.pptx)
+- PDF export for quick viewing
+- Quick exports as images of main 3 slides
+
+Location:
+`presentations/retail_discount_audit_executive_deck.pptx`
+`presentations/retail_discount_audit_executive_deck.pdf`
+`presentations/exports/`
+
 ## Repository Structure
 
 ```
