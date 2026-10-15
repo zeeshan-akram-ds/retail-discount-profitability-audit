@@ -1,15 +1,26 @@
 -- Business Question:
--- Has discounting increased over time, and has it led to a decline in profitability?
+-- Has discounting changed over time, and has profitability changed with it?
 
 SELECT
     d.year,
+
     ROUND(
-        SUM(CASE WHEN orw.netprice != orw.unitprice THEN 1.0 ELSE 0.0 END)
-        / COUNT(*) * 100, 2
+        100.0 * SUM(
+            CASE WHEN orw.netprice != orw.unitprice
+                 THEN 1.0 ELSE 0.0 END
+        ) / COUNT(*),
+        2
     ) AS discount_pct,
+
     ROUND(
-        AVG((orw.netprice - orw.unitcost) / NULLIF(orw.netprice, 0)) * 100,
-    2) AS avg_margin
+        100.0 * SUM(
+            orw.quantity * (orw.netprice - orw.unitcost)
+        ) / NULLIF(
+            SUM(orw.quantity * orw.netprice), 0
+        ),
+        2
+    ) AS blended_margin_pct
+
 FROM orders o
 JOIN orderrows orw
     ON o.orderkey = orw.orderkey
@@ -18,15 +29,18 @@ JOIN date_dim d
 GROUP BY d.year
 ORDER BY d.year;
 
+-- Result (discount_pct, blended_margin_pct):
+-- 2016 61.93 / 56.04 | 2017 61.71 / 56.09 | 2018 61.29 / 55.76 | 2019 60.92 / 55.81 | 2020 61.18 / 55.76
+-- 2021 61.09 / 56.03 | 2022 61.06 / 55.95 | 2023 61.09 / 55.87 | 2024 61.28 / 55.93 | 2025 60.91 / 55.98
+
 -- Insight:
--- Discounting remains consistently high (~61%) across all years with no clear upward trend.
--- Average margin remains stable in a narrow range (~51.8%–52.2%), showing no meaningful decline over time.
--- This indicates that while discounting is a persistent strategy, it has not intensified nor caused
--- progressive margin erosion at the aggregate level.
--- The impact of discounting on profitability appears structural and stable rather than worsening over time.
+-- The share of lines discounted stays between 60.9% and 61.9% in every year from 2016 to 2025,
+-- and blended margin between 55.8% and 56.1%. Discounting has neither intensified nor eased,
+-- and there is no progressive margin erosion at the aggregate level.
+-- A rate that has not moved in ten years looks like a default and not a decision.
 
 -- Assumptions:
 -- Discount (%) = proportion of order lines where UnitPrice != NetPrice
--- Margin (%) = (NetPrice - UnitCost) / NetPrice
+-- Margin (%) is blended: SUM(profit) / SUM(revenue)
 -- Aggregation is performed at yearly level to remove seasonal noise
 -- OrderDate is used as the reference for time-based analysis

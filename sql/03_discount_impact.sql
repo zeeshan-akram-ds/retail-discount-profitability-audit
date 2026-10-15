@@ -1,5 +1,5 @@
 -- Business Question:
--- Do discounted transactions generate higher revenue at the expense of profitability efficiency?
+-- How do discounted and full-price order lines compare on revenue, profit and margin?
 
 WITH base AS (
     SELECT
@@ -23,16 +23,19 @@ SELECT
     ROUND(
         SUM(Quantity * (NetPrice - UnitCost)) / 
         NULLIF(SUM(Quantity * NetPrice), 0) * 100, 2
-    ) AS margin_pct
+    ) AS blended_margin_pct
 FROM base
 GROUP BY discount_flag;
 
 -- Insight:
--- Discounted transactions generate higher total revenue and profit due to higher volume (~61% of order lines).
--- However, they are less efficient, with lower profit per order line (~508 vs ~605) and lower margin (~54% vs ~58%).
--- This indicates that while discounts drive sales volume, they reduce profitability efficiency,
--- suggesting potential margin leakage.
+-- Discounted lines are 61.1% of order lines (136,913) and carry more total revenue and profit
+-- than full-price lines (87,061) because there are more of them.
+-- Per line they are less profitable: about 509 profit per line against about 605 at full price,
+-- and a blended margin of about 54% against 58.4%.
+-- The per-line profit gap compares different products and baskets, so it is NOT a measure of
+-- money lost to discounting. The cost of discounting is measured directly, in discount dollars,
+-- in 09_discount_cost_and_checks.sql.
 
--- Assumption:
--- Discount is defined as UnitPrice != NetPrice at transaction level.
-
+-- Assumptions:
+-- Discount is defined as UnitPrice != NetPrice at order-line level.
+-- Margin (%) is blended: SUM(profit) / SUM(revenue).

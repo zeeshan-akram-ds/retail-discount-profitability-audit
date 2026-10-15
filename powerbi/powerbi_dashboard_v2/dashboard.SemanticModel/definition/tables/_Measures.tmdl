@@ -1,0 +1,123 @@
+table _Measures
+	lineageTag: 97a2d283-b1c5-4c64-96e2-d157e1441414
+
+	measure 'Total Revenue' = SUMX(fact_order_lines, fact_order_lines[quantity] * fact_order_lines[netprice])
+		formatString: \$#,0
+		lineageTag: 54c58499-15cb-4ea0-8ac4-ef00ca9d06f6
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Profit' = SUMX(fact_order_lines, fact_order_lines[quantity] * (fact_order_lines[netprice] - fact_order_lines[unitcost]))
+		formatString: \$#,0
+		lineageTag: 1a3d0feb-b3d6-462a-a9ac-49218f22f52c
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Blended Margin' = DIVIDE([Total Profit], [Total Revenue])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: b9ea3d9a-8379-44fa-82ce-6efb28dace64
+
+	measure 'Order Lines' = COUNTROWS(fact_order_lines)
+		formatString: #,0
+		lineageTag: fe238012-0c51-40b3-a764-35ac9574344a
+
+	measure 'Discounted Lines' = CALCULATE([Order Lines], fact_order_lines[Discounted Line] = TRUE())
+		formatString: #,0
+		lineageTag: 3f35be11-74e6-43cf-b4c6-203dab3a5230
+
+	measure 'Discount Penetration' = DIVIDE([Discounted Lines], [Order Lines])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: f29ea216-1a50-4aef-94b2-715b2d1fc3cc
+
+	measure 'Discount Dollars' = SUM(fact_order_lines[Line Discount Dollars])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 8fc95046-113a-4a93-abe1-053972120e62
+
+	measure 'Discount % of Revenue' = DIVIDE([Discount Dollars], [Total Revenue])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: a93a289e-85ef-4e68-be73-4866e0ee1039
+
+	measure 'Discount % of Profit' = DIVIDE([Discount Dollars], [Total Profit])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 908edfdb-3d83-40b3-8360-d28d17973b58
+
+	measure 'Discount per Discounted Line' = DIVIDE([Discount Dollars], [Discounted Lines])
+		formatString: \$#,0
+		lineageTag: ba3b1daa-8f44-42bf-a752-bbbe49ffea37
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Full Price Margin' = CALCULATE([Blended Margin], fact_order_lines[Discounted Line] = FALSE())
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: a6872bfd-21d6-4193-ba1e-485e9d4eb102
+
+	measure 'Discounted Margin' = CALCULATE([Blended Margin], fact_order_lines[Discounted Line] = TRUE())
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 60a04112-c1c2-44fd-9b54-27492fbe8736
+
+	measure 'Profit on Discounted Sales' = CALCULATE([Total Profit], fact_order_lines[Discounted Line] = TRUE())
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 0a40059b-f494-4e81-bd6b-056d0fe1575d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Profit with No Discount' = [Profit on Discounted Sales] + [Discount Dollars]
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 35009040-631b-4e73-894f-0c5010ab11c7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Break-even Lost Sales %' = DIVIDE([Discount Dollars], [Profit with No Discount])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 74084f03-e849-4ef5-909b-1041540e07f3
+
+	measure 'Break-even Text' = "1 in " & FORMAT(ROUND(DIVIDE(1, [Break-even Lost Sales %]), 0), "0")
+		lineageTag: fbc35da3-59db-4d51-945f-6bdc4a80bcf4
+
+	measure 'Share of Revenue' = DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(fact_order_lines[categoryname])))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 208a0504-ac2a-4401-aeb7-a10d98dc0f4b
+
+	measure 'Share of Discount Dollars' = DIVIDE([Discount Dollars], CALCULATE([Discount Dollars], ALL(fact_order_lines[categoryname])))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 9150920d-b290-4dad-acf7-e4fd010cc993
+
+	measure Locations = DISTINCTCOUNT(fact_order_lines[storekey])
+		formatString: 0
+		lineageTag: 3e12d06d-2326-45f5-8d1f-d388b9e90963
+
+	measure 'Lowest Location Rate' = MINX(VALUES(fact_order_lines[storekey]), [Discount Penetration])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: b8072f08-38c4-40f4-b25e-c13f302c4d42
+
+	measure 'Highest Location Rate' = MAXX(VALUES(fact_order_lines[storekey]), [Discount Penetration])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 6cd70905-9307-4e1c-be93-74139571fbbe
+
+	measure 'Location Rate Range' = FORMAT([Lowest Location Rate], "0.0%") & " to " & FORMAT([Highest Location Rate], "0.0%")
+		lineageTag: 01710a58-c10b-4181-9f20-3cb994f46de0
+
+	measure 'Customers with 10+ Lines' = CALCULATE(DISTINCTCOUNT(fact_order_lines[customerkey]), fact_order_lines[Customer Line Count] >= 10)
+		formatString: #,0
+		lineageTag: 088564e8-f13a-431c-998f-172f265c3f1e
+
+	measure 'Total Discount Given' =
+			
+			SUM(fact_order_lines[Discount Amount])
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: ab93c08e-b9c3-43f8-9965-654d471409c5
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

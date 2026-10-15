@@ -1,10 +1,11 @@
 -- Business Question:
--- Which product categories contribute most to high-discount (10–20%) transactions?
+-- Which product categories contribute most to high-discount (10–20%) order lines?
 
+-- Depth is NOT rounded here, so the tier edges match 04_profit_leakage.sql exactly.
 WITH discount_analysis AS (
     SELECT
         productkey,
-        ROUND((unitprice - netprice) / NULLIF(unitprice, 0) * 100, 2) AS discount_depth_pct
+        (unitprice - netprice) / NULLIF(unitprice, 0) * 100 AS discount_depth_pct
     FROM orderrows
     WHERE unitprice != netprice
 )
@@ -21,22 +22,33 @@ WHERE da.discount_depth_pct >= 10
 GROUP BY p.categoryname
 ORDER BY order_lines DESC;
 
+-- Result (83,625 high-discount lines):
+-- Computers 19,750 (23.62%) | Cell phones 18,200 (21.76%) | Music, Movies and Audio Books 13,890 (16.61%)
+-- Games and Toys 8,535 (10.21%) | Home Appliances 6,909 (8.26%) | Audio 5,665 (6.77%)
+-- TV and Video 5,412 (6.47%) | Cameras and camcorders 5,264 (6.29%)
+
 -- Insight:
--- High-discount transactions are concentrated in a few categories, with Computers (~24%) and Cell Phones (~22%) alone contributing nearly half of all high-discount volume.
--- The top three categories account for over 60% of high-discount order lines, indicating a strong category-level skew in discounting behavior.
--- This concentration suggests that discount-driven sales are not evenly distributed, but heavily driven by specific high-volume categories.
+-- Computers and Cell phones hold 45.4% of high-discount order lines, and the top three
+-- categories 62.0%. This shows where high-discount volume sits, not that these categories
+-- are discounted more heavily: query 3 below shows every category is discounted at the same rate.
+
+-- Note: an earlier version of this query rounded discount depth to 2 decimals before applying
+-- the 10% and 20% edges. That moved some lines across tier boundaries and gave counts
+-- (e.g. 84,743 high-discount lines) that did not match 04_profit_leakage.sql. It is fixed above.
 
 
 
 -- Business Question:
--- Which product categories experience the greatest margin compression when moving
+-- Which product categories experience the greatest margin change when moving
 -- from low discount (<5%) to high discount (10–20%) levels?
 
 WITH discounted_transactions AS (
     SELECT
         p.categoryname,
-        ROUND((orw.unitprice - orw.netprice) / NULLIF(orw.unitprice, 0) * 100, 2) AS discount_depth_pct,
-        ROUND((orw.netprice - orw.unitcost) / NULLIF(orw.netprice, 0) * 100, 2) AS margin_pct
+        (orw.unitprice - orw.netprice) / NULLIF(orw.unitprice, 0) * 100
+            AS discount_depth_pct,
+        orw.quantity * (orw.netprice - orw.unitcost) AS line_profit,
+        orw.quantity * orw.netprice AS line_revenue
     FROM orderrows orw
     JOIN product p
         ON p.productkey = orw.productkey
@@ -45,95 +57,114 @@ WITH discounted_transactions AS (
 
 SELECT
     categoryname,
-    ROUND(AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END), 2) AS low_discount_margin,
-    ROUND(AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END), 2) AS high_discount_margin,
+
     ROUND(
-        AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END)
+        100.0 * SUM(CASE WHEN discount_depth_pct < 5
+            THEN line_profit ELSE 0 END)
+        / NULLIF(SUM(CASE WHEN discount_depth_pct < 5
+            THEN line_revenue ELSE 0 END), 0),
+        2
+    ) AS low_discount_margin,
+
+    ROUND(
+        100.0 * SUM(CASE WHEN discount_depth_pct >= 10
+            AND discount_depth_pct < 20
+            THEN line_profit ELSE 0 END)
+        / NULLIF(SUM(CASE WHEN discount_depth_pct >= 10
+            AND discount_depth_pct < 20
+            THEN line_revenue ELSE 0 END), 0),
+        2
+    ) AS high_discount_margin,
+
+    ROUND(
+        100.0 * SUM(CASE WHEN discount_depth_pct < 5
+            THEN line_profit ELSE 0 END)
+        / NULLIF(SUM(CASE WHEN discount_depth_pct < 5
+            THEN line_revenue ELSE 0 END), 0)
         -
-        AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END),
-    2) AS margin_drop
-FROM discounted_transactions
-GROUP BY categoryname
-HAVING 
-    AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END) IS NOT NULL
-    AND
-    AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END) IS NOT NULL
-ORDER BY margin_drop DESC;
-
--- Insight:
--- Margin compression is consistent across all categories, with a drop of ~4.4 to ~5.2 percentage points
--- when moving from low to high discount levels.
--- Categories such as Cameras and Camcorders, Games and Toys, and Home Appliances exhibit the highest
--- margin sensitivity to discounting, indicating stronger profitability impact when discounts deepen.
--- However, the margin drop is relatively uniform across categories, suggesting that discount-driven
--- margin compression is a systemic pricing effect rather than isolated to specific categories.
-
--- Assumptions:
--- Margin (%) = (NetPrice - UnitCost) / NetPrice
--- Discount depth (%) = (UnitPrice - NetPrice) / UnitPrice
--- Comparison is restricted to categories that have observations in both low and high discount tiers
--- Analysis is performed at order line level
-
--- Business Question:
--- Which product categories contribute the most to overall margin compression,
--- considering both the depth of discount impact and the volume of high-discount transactions?
-
-WITH discounted_transactions AS (
-    SELECT
-        p.categoryname,
-        ROUND((orw.unitprice - orw.netprice) / NULLIF(orw.unitprice, 0) * 100, 2) AS discount_depth_pct,
-        ROUND((orw.netprice - orw.unitcost) / NULLIF(orw.netprice, 0) * 100, 2) AS margin_pct
-    FROM orderrows orw
-    JOIN product p
-        ON p.productkey = orw.productkey
-    WHERE orw.unitprice != orw.netprice
-)
-SELECT
-    categoryname,
-
-    COUNT(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN 1 END)
-        AS high_discount_order_lines,
-
-    ROUND(AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END), 2)
-        AS avg_low_margin,
-
-    ROUND(AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END), 2)
-        AS avg_high_margin,
-
-    ROUND(
-        AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END)
-        - AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END),
-    2) AS margin_drop,
-
-    ROUND(
-        (
-            AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END)
-            - AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END)
-        )
-        * COUNT(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN 1 END),
-    2) AS estimated_margin_impact_score
+        100.0 * SUM(CASE WHEN discount_depth_pct >= 10
+            AND discount_depth_pct < 20
+            THEN line_profit ELSE 0 END)
+        / NULLIF(SUM(CASE WHEN discount_depth_pct >= 10
+            AND discount_depth_pct < 20
+            THEN line_revenue ELSE 0 END), 0),
+        2
+    ) AS margin_drop
 
 FROM discounted_transactions
 GROUP BY categoryname
 HAVING
-    AVG(CASE WHEN discount_depth_pct < 5 THEN margin_pct END) IS NOT NULL
+    SUM(CASE WHEN discount_depth_pct < 5
+        THEN line_revenue ELSE 0 END) <> 0
     AND
-    AVG(CASE WHEN discount_depth_pct >= 10 AND discount_depth_pct < 20 THEN margin_pct END) IS NOT NULL
-ORDER BY estimated_margin_impact_score DESC;
+    SUM(CASE WHEN discount_depth_pct >= 10
+        AND discount_depth_pct < 20
+        THEN line_revenue ELSE 0 END) <> 0
+ORDER BY margin_drop DESC;
+
+-- Result (low-discount margin, high-discount margin, drop):
+-- Games and Toys 54.36 / 49.11 / 5.25 | Audio 56.64 / 51.85 / 4.79 | Cameras and camcorders 59.66 / 55.05 / 4.61
+-- Cell phones 55.46 / 50.94 / 4.52 | Computers 57.58 / 53.17 / 4.41 | Home Appliances 56.95 / 52.57 / 4.39
+-- Music, Movies and Audio Books 59.97 / 55.92 / 4.04 | TV and Video 58.65 / 54.63 / 4.02
 
 -- Insight:
--- Categories such as Computers and Cell Phones drive the highest margin impact,
--- not because they have the largest margin drop, but due to their significantly higher
--- volume of high-discount transactions.
--- While margin compression is relatively consistent across categories (~4.5–5.2%),
--- the overall impact is amplified in high-volume categories, making them the primary
--- contributors to margin erosion at the business level.
--- This shows that profit leakage is driven more by scale than by extreme discounting behavior
--- in any single category.
+-- The margin drop is 4.0 to 5.3 percentage points in every category. This is what a similar
+-- price cut produces on similar cost ratios, so it does not point to any category being priced
+-- differently. Games and Toys shows the largest drop and TV and Video the smallest.
 
 -- Assumptions:
--- Margin (%) = (NetPrice - UnitCost) / NetPrice
--- Discount depth (%) = (UnitPrice - NetPrice) / UnitPrice
--- High discount tier is defined as 10%–20%
--- Estimated impact score combines margin drop (%) with high-discount volume to rank relative impact
--- Metric is comparative and not a direct monetary loss calculation
+-- Margin (%) is blended: SUM(profit) / SUM(revenue)
+-- Discount depth (%) = (UnitPrice - NetPrice) / UnitPrice * 100
+-- Comparison is restricted to categories that have observations in both low and high discount tiers
+-- Analysis is performed at order line level
+
+
+
+-- Business Question:
+-- Is any category discounted more often, or more heavily, than the others?
+-- Compares share of lines discounted, discount dollars, and discount as a share of revenue.
+
+SELECT
+    p.categoryname,
+    COUNT(*) AS order_lines,
+    SUM(CASE WHEN orw.unitprice != orw.netprice THEN 1 ELSE 0 END) AS discounted_lines,
+    ROUND(
+        100.0 * SUM(CASE WHEN orw.unitprice != orw.netprice THEN 1 ELSE 0 END) / COUNT(*),
+        1
+    ) AS pct_lines_discounted,
+    ROUND(SUM(orw.quantity * (orw.unitprice - orw.netprice)), 2) AS discount_dollars,
+    ROUND(SUM(orw.quantity * orw.netprice), 2) AS revenue,
+    ROUND(SUM(orw.quantity * (orw.netprice - orw.unitcost)), 2) AS profit,
+    ROUND(
+        100.0 * SUM(orw.quantity * (orw.unitprice - orw.netprice))
+        / NULLIF(SUM(orw.quantity * orw.netprice), 0),
+        2
+    ) AS discount_pct_of_revenue,
+    ROUND(
+        100.0 * SUM(orw.quantity * (orw.unitprice - orw.netprice))
+        / SUM(SUM(orw.quantity * (orw.unitprice - orw.netprice))) OVER (),
+        1
+    ) AS pct_of_all_discount_dollars
+FROM orderrows orw
+JOIN product p
+    ON p.productkey = orw.productkey
+GROUP BY p.categoryname
+ORDER BY discount_dollars DESC;
+
+-- Result:
+-- Computers 52,427 lines, 61.2% discounted, 5.97M discount, 43.3% of discount dollars
+-- Cell phones 48,287, 61.0%, 2.25M, 16.3% | Home Appliances 18,674, 60.9%, 1.77M, 12.9%
+-- TV and Video 14,846, 61.0%, 1.40M, 10.1% | Cameras and camcorders 14,091, 61.5%, 1.16M, 8.4%
+-- Music, Movies and Audio Books 36,645, 61.4%, 0.76M, 5.5% | Audio 16,103, 60.6%, 0.36M, 2.6%
+-- Games and Toys 22,901, 61.2%, 0.12M, 0.8%
+
+-- Insight:
+-- Every category has 60.6% to 61.5% of lines discounted and gives up 6.2% to 6.4% of its revenue
+-- to discounts. Computers and Cell phones are 45% of order lines and 59% of revenue, and hold
+-- 60% of discount dollars. Category discount totals follow category revenue: no category is
+-- discounted more often or more deeply than the rest.
+
+-- Assumptions:
+-- Discount dollars = SUM(Quantity x (UnitPrice - NetPrice)), zero on full-price lines
+-- Prices are in one common currency (checked in 09_discount_cost_and_checks.sql)
+-- Category comes from the product table

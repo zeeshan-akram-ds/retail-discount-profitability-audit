@@ -1,35 +1,30 @@
-# Retail Discounting — Profitability Audit
-**Full analysis:** See `docs/final_summary.md`
+# Retail Discounting: Profitability Audit
+**Full analysis:** `docs/final_summary.md` | **Founder-facing report (4 pages):** `docs/retail_discount_audit_report.pdf`
 
-End-to-end pricing profitability audit evaluating whether discounting functions as a tactical pricing lever or a structural source of margin compression.
+An end-to-end audit of what discounting costs a retailer, where the cost sits, and what a business would need to test before changing its pricing. Built on the Contoso Retail dataset (synthetic), with SQL, Python and Power BI.
 
 ---
 
 ## Problem Statement
 
-Discounting is one of the most common levers in retail pricing, but its impact on profitability is rarely measured with precision. This project investigates:
+Discounting is one of the most common levers in retail pricing, but its cost is rarely measured in dollars. This project asks:
 
-- How prevalent discounting is across transactions, categories, customers, and stores
-- Whether discount depth correlates with margin compression
-- Whether the pattern is stable or worsening over time
-
-Understanding this matters because volume-driven discounting can mask profitability problems that are invisible at the aggregate revenue level.
+- How much does discounting cost, in dollars and as a share of revenue and profit?
+- Is it applied selectively, or as a standing practice across categories, locations, customers and years?
+- Is the margin loss anything beyond the price cut itself?
+- Can the data say whether the discounts pay for themselves, and if not, what would a test have to show?
 
 ---
 
 ## Executive Conclusion
 
-The analysis indicates that discounting is no longer functioning as a tactical pricing lever.
+Discounting here is a standing practice, not a targeted tool, and it costs $13.8M.
 
-Instead, it operates as the company’s structural pricing floor:
-
-- 61% of all transactions occur below listed price
-- margin declines consistently as discount depth increases
-- high-discount customers generate the lowest profitability
-- store behavior is nearly identical across locations
-- the pattern remains stable year over year
-
-The evidence suggests the business is not experiencing isolated promotional leakage. It is operating under a standardized discounting model that compresses margin at scale.
+- 61% of order lines are sold below list price, at a steady rate in every year from 2016 to 2025
+- The discounts total $13.8M: 6.3% of revenue and 11.3% of profit, about $101 per discounted line
+- Every category and every sales location is discounted the same way, and none of category, store, customer or year explains which sales get a discount
+- The margin loss is the price cut itself: discounted sales carry no hidden extra cost
+- Whether the discounts pay for themselves depends on how many discounted sales would be lost without them. The break-even is 16.5% (about 1 in 6), and this dataset cannot show which side the business is on
 
 ## Technical Stack
 
@@ -43,14 +38,12 @@ The evidence suggests the business is not experiencing isolated promotional leak
 
 ## Project Scope
 
-**Current phase: Complete — SQL, Python, and Power BI dashboard all finished**
-
 | Phase | Status |
 |---|---|
-| SQL analysis (exploration, discount impact, customer & store behavior, trends) | Complete |
-| Python analysis (data validation, category analysis, customer segmentation) | Notebooks 1–2 Complete |
-| Dashboard (Power BI) | Complete — 3 pages |
-| Final reporting | Partially complete |
+| SQL analysis (baseline, discount cost, tiers, categories, customers, stores, trend) | Complete. Final figures use blended margin |
+| Python analysis (validation, category analysis, customer segmentation) | Notebooks 1 to 2 use average line margins and the earlier customer segmentation. Superseded by the SQL figures; see `docs/decisions_log.md` |
+| Dashboard (Power BI) | Being updated to the final figures |
+| Final reporting | Complete: `docs/final_summary.md` and the 4-page report |
 
 ---
 
@@ -58,203 +51,102 @@ The evidence suggests the business is not experiencing isolated promotional leak
 
 **Source:** Contoso Retail (synthetic dataset)
 
-**Grain:** Order line level — each row is a single product within a single order
+**Grain:** Order line. Each row is a single product within a single order.
 
-**Scale:** ~223,000 order lines across ~93,000 orders
+**Scale:** 223,974 order lines, 93,470 orders, 52,189 customers, 2016 to 2025
+
+**Locations:** 64 sales locations that recorded sales: 63 stores plus the online channel (42% of order lines)
 
 **Tables used:**
 
 | Table | Role |
 |---|---|
-| `orderrows` | Primary transaction grain — prices, costs, quantities |
-| `orders` | Order header — date, store, customer linkage |
+| `orderrows` | Primary transaction grain: prices, costs, quantities |
+| `orders` | Order header: date, store, customer linkage |
 | `customer` | Customer dimension |
 | `product` | Product and category dimension |
 | `store` | Store location and status |
 | `date_dim` | Time dimension for trend analysis |
-| `currency_exchange` | Present in schema; not applied in this phase |
+| `currency_exchange` | Present in schema; not needed. List prices are already in one common currency (checked) |
+
+**Margin basis:** all margins are blended, `SUM(profit) / SUM(revenue)`.
 
 ---
 
 ## Business Questions Answered
 
-1. Is discounting reducing profitability?
-2. Which categories amplify margin leakage?
-3. Are high-discount customers commercially valuable?
-4. Is discounting tactical or structurally embedded?
-5. Are stores behaving independently or under centralized pricing policy?
-6. Is the pattern stable or deteriorating over time?
+1. What does discounting cost, in dollars?
+2. Does margin fall with discount depth, and is that more than the price cut itself?
+3. Which categories carry the most discount dollars, and are any discounted differently?
+4. Do discount rates differ by customer, store or year?
+5. How many discounted sales must the discount win for it to pay off?
 
 ## Analytical Approach
 
 The SQL analysis follows a structured sequence. Each file addresses a distinct business question.
 
 - Establish scale and financial baseline across all transactions
-- Measure the margin and profit efficiency gap between discounted and full-price transactions
-- Segment discounted transactions by discount depth tier and measure margin compression at each level
-- Identify which product categories drive the highest volume of high-discount transactions and the greatest margin impact
-- Profile customer discount dependency and link it to average margin by segment
-- Examine store-level discount behavior to determine whether pricing is centrally governed or location-driven
-- Validate discount rate and margin trends year over year
+- Compare blended margin for discounted and full-price lines
+- Measure total discount dollars and a break-even test
+- Segment discounted lines by depth tier and compare observed margin with what a price cut alone predicts
+- Compare categories on share of lines discounted, discount dollars and discount as a share of revenue
+- Test whether customers differ in discount rate once enough lines per customer are observed
+- Examine location-level discount rates against what chance would produce
+- Validate discount rate and margin year over year
 
 ---
 
 ## Key Findings
 
-- ~61% of all order lines are transacted below the listed unit price, indicating discounting operates as a default pricing condition rather than a limited promotional tactic.
-- Discounted transactions generate ~4 percentage points lower margin and ~$97 lower profit per order line versus full-price transactions.
-- Margin compresses consistently as discount depth increases, falling from ~54% at low discount levels to ~49% within the 10–20% tier.
-- Computers and Cell Phones contribute ~46% of all high-discount transaction volume and drive the largest aggregate margin leakage due to scale.
-- Discount rates and margin levels remain highly uniform across stores, confirming centrally governed pricing behavior rather than local store discretion.
-- No material deterioration is observed year-over-year, indicating the pricing pattern is stable and structurally embedded.
-- High-discount customers generate the lowest margins while also exhibiting lower engagement than medium-dependency customers.
-- 24.2% of customers transact at ≥90% discount dependency, while only 11% purchase near full price, confirming discounting has become normalized customer behavior rather than selective targeting.
+- 136,913 of 223,974 order lines (61.1%) are sold below list price. No line is discounted by 20% or more.
+- Blended margin is about 54% on discounted lines and 58.4% on full-price lines.
+- Discounts total $13.8M: 6.3% of revenue and 11.3% of profit, about $101 per discounted line.
+- Margin by depth tier is 57.5% (under 5%), 55.0% (5 to 10%) and 53.1% (10 to 20%). A price cut alone predicts 57.4%, 55.0% and 52.8%, so the margin loss is the price cut itself.
+- The 10 to 20% tier holds 61% of discounted lines.
+- Every category has 60.6% to 61.5% of lines discounted and gives up 6.2% to 6.4% of revenue. Computers and Cell phones hold 60% of discount dollars because they hold 59% of revenue.
+- Discount rates run from 58.3% to 64.7% across the 64 locations. The spread is what chance alone would produce.
+- The discount rate is between 60.9% and 61.9% in every year from 2016 to 2025, and blended margin between 55.8% and 56.1%.
+- Among the 3,826 customers with 10 or more order lines, discount rates cluster around the average. 13 were discounted on every line and none on fewer than 10%.
+- Removing discounts would pay off only if fewer than 16.5% of discounted sales were lost. The data has no demand information, so the test has to come from an experiment.
 
 ---
-
-## Additional Analytical Findings
-
-- Correlation between discount depth and margin is -0.37, confirming a moderate but systematic inverse relationship.
-- Margin compression remains highly consistent across categories (~4.9–5.3 percentage points), indicating standardized discounting rather than category-specific pricing optimization.
-- Estimated margin loss is volume-driven rather than severity-driven: Computers and Cell Phones create the largest aggregate impact because of transaction scale.
-- Customer-level margin declines monotonically across dependency segments:
-  - Low Dependency: ~53.5%
-  - Medium Dependency: ~51.7%
-  - High Dependency: ~50.4%
-- Medium-dependency customers demonstrate the highest engagement profile at 6.23 average order lines per customer.
-- High-discount customers are the least commercially efficient segment: lower margins without proportional activity recovery.
-- The customer engagement pattern follows an inverted-U structure, suggesting discounting supports engagement only up to a threshold before diminishing returns emerge.
 
 ## Visualizations
 
-The following charts were produced during the Python validation phase. Full-resolution versions are available in `exports/`.
+Chart exports are in `exports/`.
 
-**Discount Depth Distribution**
-![Discount Distribution](exports/discount_distribution.png)
-Discount depth is tightly concentrated between 5% and 14%, confirming that the business operates within a controlled discounting band with no extreme price reductions.
+**Margin by Discount Tier**
+![Margin by discount tier](exports/margin_by_discount_tier.png)
+Margin falls from 58.4% at full price to 53.1% in the 10 to 20% tier, by the amount a price cut alone predicts.
 
-**Margin Distribution — Discounted vs. Full-Price**
-![Margin Distribution](exports/margin_distribution.png)
-Discounted transactions cluster at a visibly lower margin level, reinforcing the ~4–5 percentage point compression identified in SQL.
+**Category Share of Revenue vs Share of Discount Dollars**
+![Category revenue vs discount share](exports/category_revenue_vs_discount_share.png)
+Each category's share of discount dollars matches its share of revenue. Category totals follow category size.
 
-**Discount Depth vs. Margin (Transaction-Level Scatter)**
-![Discount vs Margin](exports/discount_vs_margin.png)
-The negative relationship between discount depth and margin is monotonic — no tier shows margin recovery — confirming that deeper discounts consistently erode profitability without exception.
+**Discount Rate and Margin by Year**
+![Discount rate and margin by year](exports/discount_rate_and_margin_by_year.png)
+Both stay flat from 2016 to 2025.
 
-**Customer Discount Dependency Distribution**
-![Customer Discount Distribution](exports/customer_discount_distribution.png)
-The distribution is right-skewed with the dominant concentration at 100%, confirming that the largest single customer group transacts almost exclusively on discounted prices. A secondary cluster near 50% reflects mixed purchasing behaviour.
+**Customers with 10 or More Order Lines, by Share of Lines Discounted**
+![Customer discount rate, 10+ lines](exports/customer_discount_rate_10plus_lines.png)
+Customers with enough lines to measure cluster around the 61% average. There is no group that is always, or never, discounted.
 
-**Average Margin by Customer Discount Segment**
-![Customer Segment Margin](exports/customer_segment_margin.png)
-Margin declines monotonically across the three segments — Low: 53.5%, Medium: 51.7%, High: 50.4% — confirming at the customer level that discount dependency is directly associated with lower realised profitability.
+## Power BI Dashboard
 
-**Customer Engagement by Discount Segment**
-![Customer Segment Engagement](exports/customer_segment_engagement.png)
-Medium-discount customers generate the highest average order lines (6.23), nearly double the High-discount group (3.20). This inverted-U pattern confirms that beyond a threshold, additional discount dependency reduces engagement rather than increasing it.
-
-## Executive Dashboard (Power BI)
-
-The project now includes an executive-facing Power BI dashboard designed as a pricing audit rather than a generic BI report.
-
-### Dashboard Philosophy
-
-The dashboard is intentionally structured around one business question:
-
-> Is discounting being used tactically, or has it become the operational pricing floor?
-
-The design prioritises:
-- executive readability within seconds
-- decision-oriented visuals instead of exploratory clutter
-- narrative clarity over interaction-heavy reporting
-
-### Dashboard Structure (3 Pages)
-
-**Page 1 — Executive Verdict: Pricing Audit**
-KPI strip covering total revenue, average margin, discount penetration, and profit gap. 
-Margin compression by discount tier with company average reference line. Structured 
-insight panels and a final executive verdict banner answering the audit question directly.
-
-**Page 2 — Where the Margin Goes**
-Category-level margin leakage ranked by dollar impact. Bubble scatter showing margin 
-compression vs discount depth by category. Tier economics table summarising baseline 
-performance by discount band. Confirms margin erosion is volume-driven, not caused by 
-extreme discounting in specific categories.
-
-**Page 3 — The Customer Reality**
-Three segment cards (Low, Medium, High dependency) showing customer count, average 
-margin, average order lines, and average discount usage per segment. Customer discount dependency distribution histogram. Store uniformity scatter proving pricing is centrally governed, not store-driven. Closes the audit by confirming discounting has become embedded customer expectation rather than a tactical sales mechanism.
-
-## Dashboard Preview
-
-### Executive Verdict Dashboard
-Identifies discounting as a structurally embedded pricing mechanism through KPI-driven executive audit visuals.
-
-![Executive Verdict Dashboard](powerbi/exports/dashboard_page_1.png)
-
----
-
-### Margin Leakage Diagnostics
-Demonstrates how category-scale transaction volume amplifies profitability compression across standardized discount structures.
-
-![Margin Leakage Diagnostics](powerbi/exports/dashboard_page_2.png)
-
----
-
-### Customer Dependency Analysis
-Validates that discounting has become normalized customer purchasing behavior rather than selective promotional activity.
-
-![Customer Dependency Analysis](powerbi/exports/dashboard_page_3.png)
-
----
-
-### Analytical Workflow & Validation Architecture
-Illustrates the end-to-end audit framework connecting SQL validation, Python behavioral modeling, and Power BI executive reporting.
-
-![Analytical Workflow Architecture](exports/analytical_workflow.png)
+The Power BI dashboard (`powerbi/`) is being updated to the final blended figures. The numbers in `docs/final_summary.md` and the report are the reference.
 
 ## Final Executive Report
 
-A formal business-style audit report summarizing the full analytical investigation,
-key findings, operational implications, and strategic recommendations.
+A 4-page, founder-facing report on what the discounts cost, where they sit, and what to do next.
 
-Contents include:
-- Executive summary
-- Transaction-level profitability analysis
-- Category leakage assessment
-- Customer discount dependency analysis
-- Structural pricing governance findings
-- Strategic recommendations
-- Assumptions and limitations appendix
+Contents:
+- The answer on page 1: $13.8M given, 61% of lines discounted, and the 1-in-6 break-even
+- Margin by discount tier and the break-even test
+- Where the discounts sit: categories, years, customers and locations
+- Three recommendations (a discount budget, a reason code on every discount, and a controlled test on the 10 to 20% tier), what not to do, and what the data cannot tell you
+- Method notes
 
-Formats:
-- PDF executive report
-- Professionally formatted for stakeholder review
-
-Location:
-`docs/retail_discount_audit_report.pdf`
-
-## Executive Presentation Deck
-
-A concise 7-slide executive presentation designed for stakeholder review
-and business discussion.
-
-The deck summarizes:
-- Core audit findings
-- Margin compression drivers
-- Customer behavior patterns
-- Structural pricing evidence
-- Strategic recommendations
- 
-Formats:
-- PowerPoint presentation (.pptx)
-- PDF export for quick viewing
-- Quick exports as images of main 3 slides
-
-Location:
-`presentations/retail_discount_audit_executive_deck.pptx`
-`presentations/retail_discount_audit_executive_deck.pdf`
-`presentations/exports/`
+Location: `docs/retail_discount_audit_report.pdf`
 
 ## Repository Structure
 
@@ -266,30 +158,26 @@ retail-discount-profitability-audit/
 │   └── processed/    # Cleaned or transformed outputs (pending)
 │
 ├── docs/
-│   ├── decisions_log.md        # Analytical decisions and justifications made during the project
-│   ├── final_summary.md        # Full business-ready audit report
-│   └── final_summary.pdf       # PDF export of the audit report
+│   ├── decisions_log.md                  # Analytical decisions and justifications
+│   ├── final_summary.md                  # Full written audit
+│   └── retail_discount_audit_report.pdf  # 4-page founder-facing report
 │
-├── exports/          # Analytical chart exports
+├── exports/          # Chart exports used in this README
 │
-├── powerbi/          # Executive pricing audit dashboard (.pbix + assets)
-│   ├── exports/      # Dashboard screenshots and analytical outputs
-│       ├── dashboard_page_1.png
-│       ├── dashboard_page_2.png
-│       └── dashboard_page_3.png
-│       └── kpi_cards_page_3.png
-├── python/           # Validation, category analysis, customer segmentation, export preparation
+├── powerbi/          # Pricing audit dashboard (.pbix + assets), being updated
+├── python/           # Validation, category analysis, customer segmentation notebooks (superseded by SQL figures)
 │
 ├── sql/
 │   ├── 00_schema.sql                    # Table definitions
 │   ├── 01_load.sql                      # Data loading
 │   ├── 02_exploration.sql               # Scale and financial baseline
-│   ├── 03_discount_impact.sql           # Discounted vs. non-discounted performance
-│   ├── 04_profit_leakage.sql            # Margin compression by discount tier
+│   ├── 03_discount_impact.sql           # Discounted vs. full-price performance
+│   ├── 04_profit_leakage.sql            # Margin by discount tier
 │   ├── 05_discount_drivers.sql          # Category-level discount volume and impact
-│   ├── 06_customer_discount_behavior.sql # Customer segmentation by discount dependency
+│   ├── 06_customer_discount_behavior.sql # Customer discount rates (segmentation not used as evidence)
 │   ├── 07_discount_trend_over_time.sql  # Year-over-year trend analysis
-│   └── 08_store_discount_behavior.sql   # Store-level discount and margin comparison
+│   ├── 08_store_discount_behavior.sql   # Store-level discount and margin comparison
+│   └── 09_discount_cost_and_checks.sql  # Discount dollars, break-even test, currency check
 │
 ├── .gitignore
 └── README.md
@@ -299,12 +187,11 @@ retail-discount-profitability-audit/
 
 ## What This Project Demonstrates
 
-- Business-oriented SQL analysis
-- Translation of findings into executive reporting
-- Customer segmentation and behavioral analysis
-- validation using Python
-- Decision-focused dashboard design
-- Structured analytical documentation
+- Business-oriented SQL analysis built around one question: what does discounting cost?
+- Measuring a cost in dollars and testing it against a break-even instead of reporting margin points alone
+- Checking a finding before reporting it: an early customer segmentation was set aside after a direct test showed it came from small line counts
+- Translation of findings into a short founder-facing report
+- Structured analytical documentation, including a decisions log with superseded decisions recorded
 
 ## How to Reproduce
 
@@ -313,7 +200,7 @@ retail-discount-profitability-audit/
 1. Create a database and run `00_schema.sql` to set up all tables
 2. Place raw CSV files in `data/raw/` and update file paths in `01_load.sql` to match your local directory
 3. Run `01_load.sql` to load all source data
-4. Run SQL files `02` through `08` in order — each file is self-contained and includes its business question, query, and inline findings
+4. Run SQL files `02` through `09` in order. Each file is self-contained and includes its business question, queries, recorded results and insight.
 
 No external dependencies are required for the SQL phase.
 
@@ -321,19 +208,16 @@ No external dependencies are required for the SQL phase.
 
 ## Limitations
 
-- **Synthetic data.** The Contoso dataset does not represent a real business. Findings reflect patterns in the data as structured and should not be interpreted as real-world conclusions.
-- **Currency normalization not applied.** The analysis uses monetary values as-is. Since the focus is on relative metrics (margin %, discount rates), the impact is limited but not eliminated for absolute comparisons across geographies.
-- **Line-level margin only.** Margin is computed as `(NetPrice - UnitCost) / NetPrice` per order line. Fixed costs, returns, and overheads are excluded.
-- **No elasticity data.** It is not possible from this dataset to determine whether discounting generates incremental volume or simply applies a price reduction to demand that already existed.
+- **Synthetic data.** The Contoso dataset does not represent a real business. Patterns reflect how the data was generated and should not be read as real-world conclusions.
+- **No demand data.** The dataset cannot show whether discounting wins extra sales or only lowers the price on sales that would have happened anyway. The break-even test shows what a controlled test would have to show.
+- **No discount drivers.** There is no promotion, campaign or reason field. Product, quantity and promotion calendar were not tested as drivers.
+- **Line-level margin only.** Margin is profit over revenue per order line. Overhead, returns, shipping and marketing cost are excluded.
 - **Discount tiers are analytically defined.** Tier boundaries (5%, 10%, 20%) are set for pattern detection, not derived from internal pricing policy.
+- **Closed stores are included.** Store lifecycle fields were not used to filter transactions.
 
 ---
 
 ## Next Steps
 
-- **Executive Summary** — One-page PDF distilling the audit findings and recommendations for non-technical stakeholders
-- **Final Recommendations** — Evidence-backed recommendations with explicit failure 
-  conditions and business constraints documented
-- **Loom Walkthrough** — Recorded dashboard narrative for portfolio and outreach use
-- **Medium Case Study** — Written case study framing the audit as a business problem, 
-  not a technical exercise
+- Update the Power BI dashboard to the final blended figures
+- Re-run the Python notebooks on the blended margin basis

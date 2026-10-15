@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.5.0/schema.json",
+  "name": "260dd17039124fbd90c3",
+  "position": {
+    "x": 660,
+    "y": 550,
+    "z": 8000,
+    "height": 130,
+    "width": 590,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "No category, year or location stands out. Customers with 10+ lines cluster around the company average, so there is no group that is always or never discounted. Nothing tested explains which sales get a discount.",
+                    "textStyle": {
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "13pt",
+                      "color": "#1B2A3A"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Locations are 63 stores plus the online channel.",
+                    "textStyle": {
+                      "fontWeight": "normal",
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "11pt",
+                      "color": "#5B6B7B"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
