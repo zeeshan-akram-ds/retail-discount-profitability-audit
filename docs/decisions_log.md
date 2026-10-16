@@ -170,7 +170,7 @@ Every margin in the SQL layer, report and dashboard is blended: `SUM(profit) / S
 Early outputs mixed the two bases. Headline margins were profit over revenue, while tier tables averaged line margins, so the discounted average (about 54%) could not be reconciled with tier margins that all sat below it. A single basis removes that contradiction, and blended margin matches how a founder reads profit over revenue.
 
 ### Implication
-Average line margin is kept only where a distribution of individual lines is shown. Python notebooks that report average line margins must be re-run on the blended basis before their figures are compared with SQL.
+Average line margin is kept only where a distribution of individual lines is shown. The Python notebooks report average line margins. They are kept as the exploration record, labelled as superseded, and are not re-run; their margin figures are not compared with the SQL figures.
 
 ## 15. Discount Depth and Tier Definition
 

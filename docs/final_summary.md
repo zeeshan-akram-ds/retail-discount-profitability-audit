@@ -156,4 +156,4 @@ Category share of revenue against share of discount dollars, share of order line
 
 ## 11. Figure Basis
 
-All figures in this document come from the final SQL layer using blended margin. The dashboard recalculates the same figures in DAX from the raw price and quantity columns. The Python notebooks currently report average line margins, so their margin figures will differ until they are re-run on the blended basis.
+All figures in this document come from the final SQL layer using blended margin. The dashboard recalculates the same figures in DAX from the raw price and quantity columns, and its tier margins can differ from the SQL figures by up to 0.1 percentage point. The Python notebooks are kept as the exploration record and are labelled as superseded: the final figures are the ones in this document and in `sql/`.

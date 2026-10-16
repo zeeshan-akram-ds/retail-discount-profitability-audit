@@ -41,8 +41,8 @@ Discounting here is a standing practice, not a targeted tool, and it costs $13.8
 | Phase | Status |
 |---|---|
 | SQL analysis (baseline, discount cost, tiers, categories, customers, stores, trend) | Complete. Final figures use blended margin |
-| Python analysis (validation, category analysis, customer segmentation) | Notebooks 1 to 2 use average line margins and the earlier customer segmentation. Superseded by the SQL figures; see `docs/decisions_log.md` |
-| Dashboard (Power BI) | Being updated to the final figures |
+| Python analysis (validation, category analysis, customer segmentation) | Kept as the exploration record and labelled as superseded: they use average line margins and the earlier customer segmentation. Final figures are the SQL ones; see `docs/decisions_log.md` |
+| Dashboard (Power BI) | Complete: 2 pages, figures recomputed in DAX on the blended basis |
 | Final reporting | Complete: `docs/final_summary.md` and the 4-page report |
 
 ---
@@ -133,7 +133,12 @@ Customers with enough lines to measure cluster around the 61% average. There is 
 
 ## Power BI Dashboard
 
-The Power BI dashboard (`powerbi/`) is being updated to the final blended figures. The numbers in `docs/final_summary.md` and the report are the reference.
+A 2-page Power BI project (`powerbi/`) built to be read, not explored. It follows the founder-facing report.
+
+- **Page 1, The Answer:** discount dollars, share of revenue and profit, share of lines discounted, margin by discount depth, and the 1-in-6 break-even.
+- **Page 2, Same Everywhere:** category share of revenue vs share of discount dollars, discount rate by year, customers with 10 or more order lines, and the spread across sales locations.
+
+Every figure is calculated in DAX from the raw price and quantity columns using blended margin, so the dashboard reconciles with `docs/final_summary.md`.
 
 ## Final Executive Report
 
@@ -164,7 +169,7 @@ retail-discount-profitability-audit/
 │
 ├── exports/          # Chart exports used in this README
 │
-├── powerbi/          # Pricing audit dashboard (.pbix + assets), being updated
+├── powerbi/          # Two-page pricing audit dashboard (Power BI project)
 ├── python/           # Validation, category analysis, customer segmentation notebooks (superseded by SQL figures)
 │
 ├── sql/
@@ -216,8 +221,3 @@ No external dependencies are required for the SQL phase.
 - **Closed stores are included.** Store lifecycle fields were not used to filter transactions.
 
 ---
-
-## Next Steps
-
-- Update the Power BI dashboard to the final blended figures
-- Re-run the Python notebooks on the blended margin basis
